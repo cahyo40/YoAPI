@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>yoapi — REST → Dart model</title>
+<style>
+  :root { --bg:#0f1115; --panel:#181b22; --border:#2a2f3a; --fg:#e6e9ef; --mut:#8b93a5; --acc:#6ea8fe; --err:#ff6b6b; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--bg); color:var(--fg); }
+  header { padding:12px 16px; border-bottom:1px solid var(--border); font-weight:600; }
+  .row { display:flex; gap:8px; padding:12px 16px; }
+  select,input,textarea,button { font:inherit; background:var(--panel); color:var(--fg); border:1px solid var(--border); border-radius:6px; padding:8px 10px; }
+  input { flex:1; }
+  button { background:var(--acc); color:#0b1020; font-weight:600; border:none; cursor:pointer; }
+  button:disabled { opacity:.5; cursor:default; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:0; height:calc(100vh - 160px); }
+  .pane { display:flex; flex-direction:column; border-top:1px solid var(--border); }
+  .pane + .pane { border-left:1px solid var(--border); }
+  .pane h2 { margin:0; padding:8px 16px; font-size:12px; color:var(--mut); border-bottom:1px solid var(--border); text-transform:uppercase; letter-spacing:.05em; }
+  pre,textarea { flex:1; margin:0; padding:12px 16px; overflow:auto; white-space:pre; background:transparent; border:none; color:var(--fg); resize:none; }
+  .body-row { padding:0 16px 12px; }
+  .body-row textarea { flex:none; height:80px; padding:8px 10px; width:100%; border:1px solid var(--border); border-radius:6px; }
+  .err { color:var(--err); }
+  .hint { padding:0 16px 12px; color:var(--mut); font-size:12px; }
+  label { color:var(--mut); font-size:12px; align-self:center; }
+</style>
+</head>
+<body>
+<header>yoapi — kirim REST API, response jadi Dart model</header>
+
+<div class="row">
+  <select id="method">
+    <option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option>
+  </select>
+  <input id="url" placeholder="https://api.example.com/users/123" value="https://jsonplaceholder.typicode.com/users/1">
+  <button id="send">Send</button>
+</div>
+<div class="body-row">
+  <label>Body (JSON, untuk POST/PUT/PATCH)</label>
+  <textarea id="reqbody" placeholder='{"key":"value"}'></textarea>
+</div>
+<div class="hint" id="cors"><label style="cursor:pointer"><input type="checkbox" id="useproxy" checked> lewat proxy (bypass CORS)</label> — matikan untuk fetch langsung dari browser.</div>
+
+<div class="grid">
+  <div class="pane">
+    <h2>Response <span id="status" style="color:var(--mut)"></span></h2>
+    <pre id="response">—</pre>
+  </div>
+  <div class="pane">
+    <h2>Dart <span id="clsname" style="color:var(--acc)"></span></h2>
+    <pre id="dart">—</pre>
+  </div>
+</div>
+
+<script type="module">
+import { quicktype, InputData, jsonInputForTargetLanguage } from "https://esm.sh/quicktype-core@23";
+
+const $ = id => document.getElementById(id);
+
+// URI → nama class. Ambil segment path terakhir yang non-numerik, PascalCase, singular-ish.
+function classNameFromUrl(url) {
+  try {
+    const parts = new URL(url).pathname.split("/").filter(Boolean);
+    let seg = "Model";
+    for (let i = parts.length - 1; i >= 0; i--) {
+      if (!/^\d+$/.test(parts[i])) { seg = parts[i]; break; }   // skip id numerik
+    }
+    return seg
+      .replace(/[^a-zA-Z0-9]+/g, " ")
+      .replace(/\b\w/g, c => c.toUpperCase())
+      .replace(/\s+/g, "")
+      .replace(/s$/, "") || "Model";   // ponytail: naive singularize
+  } catch { return "Model"; }
+}
+
+async function jsonToDart(name, jsonStr) {
+  const input = jsonInputForTargetLanguage("dart");
+  await input.addSource({ name, samples: [jsonStr] });
+  const inputData = new InputData();
+  inputData.addInput(input);
+  const { lines } = await quicktype({
+    inputData,
+    lang: "dart",
+    rendererOptions: { "null-safety": "true", "just-types": "false" },
+  });
+  return lines.join("\n");
+}
+
+async function send() {
+  const method = $("method").value;
+  const url = $("url").value.trim();
+  const btn = $("send");
+  if (!url) return;
+  btn.disabled = true;
+  $("response").textContent = "…";
+  $("dart").textContent = "…";
+  const name = classNameFromUrl(url);
+  $("clsname").textContent = name;
+
+  try {
+    const opts = { method, headers: {} };
+    if (["POST","PUT","PATCH"].includes(method) && $("reqbody").value.trim()) {
+      opts.headers["Content-Type"] = "application/json";
+      opts.body = $("reqbody").value;
+    }
+    const target = $("useproxy").checked ? `/proxy?url=${encodeURIComponent(url)}` : url;
+    const res = await fetch(target, opts);
+    $("status").textContent = `${res.status} ${res.statusText}`;
+    const text = await res.text();
+
+    let pretty = text, parsed;
+    try { parsed = JSON.parse(text); pretty = JSON.stringify(parsed, null, 2); } catch {}
+    $("response").textContent = pretty;
+
+    if (parsed === undefined) {
+      $("dart").innerHTML = '<span class="err">Response bukan JSON valid — tak bisa jadi model.</span>';
+    } else {
+      $("dart").textContent = await jsonToDart(name, JSON.stringify(parsed));
+    }
+  } catch (e) {
+    $("response").innerHTML = `<span class="err">${e.message}\n\n(kemungkinan CORS diblok server target)</span>`;
+    $("dart").textContent = "—";
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+$("send").addEventListener("click", send);
+$("url").addEventListener("keydown", e => { if (e.key === "Enter") send(); });
+</script>
+</body>
+</html>

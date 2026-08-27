@@ -1,0 +1,23 @@
+node_modules
+dist
+.env
+.env.local
+*.local
+.vercel
+.DS_Store
+
+# Kredensial — jangan pernah commit
+client_secret_*.json
+*.pem
+
+# Dokumen internal — tak di-track
+docs/
+graphify-out/
+
+# Harness / tooling lokal
+.claude/
+.impeccable/
+*.tsbuildinfo
+
+# Artefak sampel (bukan bagian aplikasi)
+recommended_model.dart
