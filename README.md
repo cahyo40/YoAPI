@@ -8,10 +8,13 @@ YoApi menyatukan dua alat yang biasanya terpisah: sebuah HTTP client (seperti Po
 
 🔗 **Live:** https://yoapi.vercel.app
 
+![Konsol YoApi — dua panel: request di kiri, response + model di kanan](screenshots/dashboard-desktop.png)
+
 ---
 
 ## Daftar Isi
 
+- [Tampilan](#tampilan)
 - [Masalah yang Dipecahkan](#masalah-yang-dipecahkan)
 - [Fitur](#fitur)
 - [Cara Kerja](#cara-kerja)
@@ -23,6 +26,39 @@ YoApi menyatukan dua alat yang biasanya terpisah: sebuah HTTP client (seperti Po
 - [Batasan](#batasan)
 - [Stack Teknologi](#stack-teknologi)
 - [Lisensi](#lisensi)
+
+---
+
+## Tampilan
+
+**Konsol — desktop (dark).** Dua panel berdampingan: konsol request di kiri, readout response + model bertipe di kanan.
+
+![Dashboard desktop dark](screenshots/dashboard-desktop.png)
+
+**Konsol — mobile (dark).** Layout menumpuk dengan menu drawer, tetap terbaca di layar sempit.
+
+<img src="screenshots/dashboard-mobile.png" alt="Dashboard mobile dark" width="360" />
+
+**Riwayat.** Log eksekusi terkelompok per hari, dengan aksi simpan-ke-folder dan diff.
+
+![Halaman riwayat](screenshots/history.png)
+
+**Login.** Layar masuk dengan logo instrumen dan opsi Google OAuth.
+
+![Halaman login](screenshots/login.png)
+
+<details>
+<summary>Light mode</summary>
+
+![Dashboard desktop light](screenshots/dashboard-desktop-light.png)
+
+<img src="screenshots/dashboard-mobile-light.png" alt="Dashboard mobile light" width="360" />
+
+![Riwayat light](screenshots/history-light.png)
+
+![Login light](screenshots/login-light.png)
+
+</details>
 
 ---
 
