@@ -152,5 +152,38 @@ export function useWorkspace(userId: string | null) {
     [reload]
   );
 
-  return { folders, requests, createFolder, renameFolder, deleteFolder, setFolderEnv, updateRequest, deleteRequest, saveRequest, reload };
+  /** Import banyak request sekaligus ke satu folder (Postman). Satu insert batch. */
+  const importRequests = useCallback(
+    async (
+      folderId: string,
+      rows: {
+        name: string;
+        method: HttpMethod;
+        url: string;
+        headers: HeaderPair[];
+        params: HeaderPair[];
+        body: string;
+      }[]
+    ): Promise<Fail> => {
+      if (!userId) return "Belum login.";
+      if (rows.length === 0) return "Tak ada request untuk diimport.";
+      const { error } = await supabase.from("api_requests").insert(
+        rows.map((r) => ({
+          folder_id: folderId,
+          request_name: r.name,
+          http_method: r.method,
+          endpoint_url: r.url,
+          headers: maskSensitive(r.headers),
+          params: r.params,
+          request_body: r.body || null,
+        }))
+      );
+      if (error) return error.message;
+      await reload();
+      return null;
+    },
+    [userId, reload]
+  );
+
+  return { folders, requests, createFolder, renameFolder, deleteFolder, setFolderEnv, updateRequest, deleteRequest, saveRequest, importRequests, reload };
 }

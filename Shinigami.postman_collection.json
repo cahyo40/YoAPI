@@ -1,0 +1,349 @@
+{
+  "info": {
+    "_postman_id": "75644453-b024-4c1c-b92c-4d8b731fb657",
+    "name": "Shinigami",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "4923299"
+  },
+  "item": [
+    {
+      "name": "List By Popularity",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.shngm.io/v1/manga/list?page=1&page_size=1&genre_include_mode=or&genre_exclude_mode=or&sort=popularity&sort_order=desc",
+          "protocol": "https",
+          "host": [
+            "api",
+            "shngm",
+            "io"
+          ],
+          "path": [
+            "v1",
+            "manga",
+            "list"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "page_size",
+              "value": "1"
+            },
+            {
+              "key": "genre_include_mode",
+              "value": "or"
+            },
+            {
+              "key": "genre_exclude_mode",
+              "value": "or"
+            },
+            {
+              "key": "sort",
+              "value": "popularity"
+            },
+            {
+              "key": "sort_order",
+              "value": "desc"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List By Popularity format ",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.shngm.io/v1/manga/list?page=1&page_size=24&genre_include_mode=or&genre_exclude_mode=or&format=manhwa&sort=popularity&sort_order=desc",
+          "protocol": "https",
+          "host": [
+            "api",
+            "shngm",
+            "io"
+          ],
+          "path": [
+            "v1",
+            "manga",
+            "list"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "page_size",
+              "value": "24"
+            },
+            {
+              "key": "genre_include_mode",
+              "value": "or"
+            },
+            {
+              "key": "genre_exclude_mode",
+              "value": "or"
+            },
+            {
+              "key": "format",
+              "value": "manhwa"
+            },
+            {
+              "key": "sort",
+              "value": "popularity"
+            },
+            {
+              "key": "sort_order",
+              "value": "desc"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Genre",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.shngm.io/v1/genre/list",
+          "protocol": "https",
+          "host": [
+            "api",
+            "shngm",
+            "io"
+          ],
+          "path": [
+            "v1",
+            "genre",
+            "list"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Format",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.shngm.io/v1/format/list?page=1",
+          "protocol": "https",
+          "host": [
+            "api",
+            "shngm",
+            "io"
+          ],
+          "path": [
+            "v1",
+            "format",
+            "list"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List ber genre",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.shngm.io/v1/manga/list?page=1&page_size=24&genre_include=harem%2Cgame&genre_include_mode=or&genre_exclude_mode=or&sort=latest&sort_order=desc",
+          "protocol": "https",
+          "host": [
+            "api",
+            "shngm",
+            "io"
+          ],
+          "path": [
+            "v1",
+            "manga",
+            "list"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "page_size",
+              "value": "24"
+            },
+            {
+              "key": "genre_include",
+              "value": "harem%2Cgame"
+            },
+            {
+              "key": "genre_include_mode",
+              "value": "or"
+            },
+            {
+              "key": "genre_exclude_mode",
+              "value": "or"
+            },
+            {
+              "key": "sort",
+              "value": "latest"
+            },
+            {
+              "key": "sort_order",
+              "value": "desc"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "detail manhwa",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.shngm.io/v1/manga/detail/88e7c6f4-0da7-43da-b7af-b53e3376a988",
+          "protocol": "https",
+          "host": [
+            "api",
+            "shngm",
+            "io"
+          ],
+          "path": [
+            "v1",
+            "manga",
+            "detail",
+            "88e7c6f4-0da7-43da-b7af-b53e3376a988"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "LIst Chapter Manwhwa",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.shngm.io/v1/chapter/129602df-f69d-4903-ad9b-f1e92a4feaba/list?page=1&page_size=24&sort_by=chapter_number&sort_order=desc",
+          "protocol": "https",
+          "host": [
+            "api",
+            "shngm",
+            "io"
+          ],
+          "path": [
+            "v1",
+            "chapter",
+            "129602df-f69d-4903-ad9b-f1e92a4feaba",
+            "list"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "page_size",
+              "value": "24"
+            },
+            {
+              "key": "sort_by",
+              "value": "chapter_number"
+            },
+            {
+              "key": "sort_order",
+              "value": "desc"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "manhwanya",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.shngm.io/v1/chapter/detail/bc0bb269-3919-4aa6-8370-7a73a6f97461",
+          "protocol": "https",
+          "host": [
+            "api",
+            "shngm",
+            "io"
+          ],
+          "path": [
+            "v1",
+            "chapter",
+            "detail",
+            "bc0bb269-3919-4aa6-8370-7a73a6f97461"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "imagenya",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://delivery.shngm.id/chapter/manga_129602df-f69d-4903-ad9b-f1e92a4feaba/chapter_bc0bb269-3919-4aa6-8370-7a73a6f97461/01-55b19d.jpg",
+          "protocol": "https",
+          "host": [
+            "delivery",
+            "shngm",
+            "id"
+          ],
+          "path": [
+            "chapter",
+            "manga_129602df-f69d-4903-ad9b-f1e92a4feaba",
+            "chapter_bc0bb269-3919-4aa6-8370-7a73a6f97461",
+            "01-55b19d.jpg"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import { hasSensitive } from "../lib/sensitiveHeaders.ts";
 import { applyEnv, envMap } from "../lib/env.ts";
 import { authHeader, emptyAuth, type AuthConfig } from "../lib/auth.ts";
 import type { ParsedCurl } from "../lib/parseCurl.ts";
+import type { ParsedPostman } from "../lib/parsePostman.ts";
 import { useConvert } from "../hooks/useConvert.ts";
 import { useHistory } from "../hooks/useHistory.ts";
 import { useEnv } from "../hooks/useEnv.ts";
@@ -16,6 +17,7 @@ import { useToast } from "../components/Toast.tsx";
 import { useWorkspace, type SavedRequest } from "../hooks/useWorkspace.ts";
 import { supabase } from "../lib/supabase.ts";
 import AppHeader from "../components/AppHeader.tsx";
+import Footer from "../components/Footer.tsx";
 import RequestBar from "../components/RequestBar.tsx";
 import RequestPanel from "../components/RequestPanel.tsx";
 import ResponseView from "../components/ResponseView.tsx";
@@ -23,6 +25,7 @@ import DartOutput from "../components/CodeOutput.tsx";
 import Sidebar from "../components/Sidebar.tsx";
 import SaveRequestModal from "../components/SaveRequestModal.tsx";
 import ImportCurlModal from "../components/ImportCurlModal.tsx";
+import ImportPostmanModal from "../components/ImportPostmanModal.tsx";
 import ExportFolderModal from "../components/ExportFolderModal.tsx";
 import ConfirmModal from "../components/ConfirmModal.tsx";
 import { exportFolder, type ExportItem } from "../lib/exportFolder.ts";
@@ -73,6 +76,7 @@ export default function Dashboard() {
   });
   const [saveOpen, setSaveOpen] = useState(false);
   const [curlOpen, setCurlOpen] = useState(false);
+  const [postmanOpen, setPostmanOpen] = useState(false);
   const [exportFolderTarget, setExportFolderTarget] = useState<Folder | null>(null);
   const [exporting, setExporting] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
@@ -85,7 +89,7 @@ export default function Dashboard() {
   const userId = user?.id ?? null;
   const history = useHistory(userId);
   const env = useEnv();
-  const { folders, requests, createFolder, renameFolder, deleteFolder, setFolderEnv, updateRequest, deleteRequest, saveRequest } =
+  const { folders, requests, createFolder, renameFolder, deleteFolder, setFolderEnv, updateRequest, deleteRequest, saveRequest, importRequests } =
     useWorkspace(userId);
 
   // Folder aktif (T9.3): env diambil dari folder ini bila authed & terpilih.
@@ -182,6 +186,15 @@ export default function Dashboard() {
     setHeaders(r.headers);
     setBody(r.body);
     toast("cURL diimport.", "success");
+  };
+
+  // Import Postman → semua endpoint masuk ke folder terpilih (khusus authed).
+  const importPostman = async (folderId: string, parsed: ParsedPostman) => {
+    const err = await importRequests(folderId, parsed.items);
+    toast(
+      err ? `Gagal import: ${err}` : `${parsed.items.length} endpoint diimport dari "${parsed.name}".`,
+      err ? "error" : "success"
+    );
   };
 
   const pickRequest = (r: SavedRequest) => {
@@ -393,6 +406,18 @@ export default function Dashboard() {
                 Simpan ke folder
               </ToolButton>
             )}
+            {user && (
+              <ToolButton
+                onClick={() =>
+                  folders.length === 0
+                    ? toast("Buat folder dulu di sidebar.", "error")
+                    : setPostmanOpen(true)
+                }
+                icon={<IconImport size={14} />}
+              >
+                Import Postman
+              </ToolButton>
+            )}
           </div>
 
           <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto md:grid-cols-2 md:overflow-hidden">
@@ -454,6 +479,8 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <Footer />
+
       <SaveRequestModal
         open={saveOpen}
         folders={folders}
@@ -463,6 +490,13 @@ export default function Dashboard() {
       />
 
       <ImportCurlModal open={curlOpen} onClose={() => setCurlOpen(false)} onImport={importCurl} />
+
+      <ImportPostmanModal
+        open={postmanOpen}
+        folders={folders}
+        onClose={() => setPostmanOpen(false)}
+        onImport={importPostman}
+      />
 
       <ConfirmModal
         open={confirmLogout}

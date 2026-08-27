@@ -80,6 +80,7 @@ YoApi memampatkan seluruh siklus itu ke satu layar. Response JSON yang masuk **o
 - **Header, query params, dan body** editor dengan penyorotan.
 - **Auth helper** — Bearer token, Basic auth, dan API key, di-inject ke header secara otomatis.
 - **Import cURL** — tempel perintah `curl` apa pun, YoApi mengurai method/URL/header/body.
+- **Import Postman** (khusus user login) — impor Postman Collection v2.x (JSON) ke sebuah folder; folder & request bersarang di-flatten. Body mode `raw` diimpor (form-data/file diabaikan); header sensitif otomatis di-mask.
 - **Environment variables** — sintaks `{{key}}` yang di-resolve dari variabel tersimpan (per folder untuk user login, localStorage untuk guest).
 - **Share link** — bagikan konfigurasi request lewat URL (state di-encode di URL, tanpa database).
 - **Starter examples** — endpoint publik nyata (JSONPlaceholder, GitHub API, PokeAPI, dog.ceo) di empty state untuk langsung mencoba.
@@ -102,6 +103,7 @@ YoApi memampatkan seluruh siklus itu ke satu layar. Response JSON yang masuk **o
 - **Folder** untuk mengelompokkan endpoint tersimpan, tersinkron ke cloud (Supabase).
 - **Simpan request** ke folder; **header sensitif otomatis di-mask** dengan konfirmasi.
 - **Environment per folder** — set variabel yang berbeda untuk tiap workspace.
+- **Import Postman Collection** — impor endpoint dari export Postman (v2.x JSON) langsung ke folder.
 - **Export folder ke ZIP** — berisi JSON mentah (request & response), model per endpoint, model dari body request, daftar endpoint, dan README cara pakai.
 
 ### History

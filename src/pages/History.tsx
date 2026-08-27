@@ -8,6 +8,7 @@ import { useTheme } from "../hooks/useTheme.ts";
 import { useToast } from "../components/Toast.tsx";
 import { supabase } from "../lib/supabase.ts";
 import AppHeader from "../components/AppHeader.tsx";
+import Footer from "../components/Footer.tsx";
 import ConfirmModal from "../components/ConfirmModal.tsx";
 import SaveRequestModal from "../components/SaveRequestModal.tsx";
 import DiffModal from "../components/DiffModal.tsx";
@@ -222,6 +223,8 @@ export default function History() {
           )}
         </div>
       </main>
+
+      <Footer />
 
       <SaveRequestModal
         open={!!saving}
