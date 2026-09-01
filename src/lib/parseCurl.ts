@@ -69,6 +69,8 @@ export function parseCurl(raw: string): ParsedCurl {
       body = val(inline);
     } else if (flag === "-b" || flag === "--cookie") {
       headers.push({ key: "Cookie", value: val(inline), enabled: true });
+    } else if (flag === "-A" || flag === "--user-agent") {
+      headers.push({ key: "User-Agent", value: val(inline), enabled: true });
     } else if (flag === "-u" || flag === "--user") {
       const cred = val(inline);
       headers.push({ key: "Authorization", value: `Basic ${btoa(cred)}`, enabled: true });

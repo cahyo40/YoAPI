@@ -8,11 +8,12 @@ import { applyEquatable } from "../lib/equatable.ts";
 import { improveNames } from "../lib/improveNames.ts";
 
 export interface ConvertRequest {
+  seq?: number;
   samples: string[]; // 1+ contoh JSON dari endpoint sama → model gabungan (T8.2)
   className: string;
   options: ConvertOptions;
 }
-export type ConvertResponse = { code: string } | { error: string };
+export type ConvertResponse = { code: string; seq?: number } | { error: string; seq?: number };
 
 function rendererOptionsFor(o: ConvertOptions): Record<string, string> {
   const r: Record<string, string> = {};
@@ -64,11 +65,12 @@ async function convert(req: ConvertRequest): Promise<string> {
 }
 
 self.onmessage = async (e: MessageEvent<ConvertRequest>) => {
+  const seq = e.data.seq;
   try {
     for (const s of e.data.samples) JSON.parse(s); // validasi tiap sampel
     const code = await convert(e.data);
-    self.postMessage({ code } satisfies ConvertResponse);
+    self.postMessage({ code, seq } satisfies ConvertResponse);
   } catch (err: any) {
-    self.postMessage({ error: err?.message ?? "conversion failed" } satisfies ConvertResponse);
+    self.postMessage({ error: err?.message ?? "conversion failed", seq } satisfies ConvertResponse);
   }
 };

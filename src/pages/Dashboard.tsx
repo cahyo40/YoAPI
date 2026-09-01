@@ -35,7 +35,9 @@ import type { TargetLang } from "../types.ts";
 import { methodLamp } from "../lib/lamp.ts";
 import { splitUrlQuery, mergeParams } from "../lib/urlQuery.ts";
 import { guestRemaining, bumpGuest, GUEST_LIMIT } from "../lib/guestQuota.ts";
-import { IconImport, IconShare, IconSave } from "../components/icons.tsx";
+import { generateCurl } from "../lib/curlGenerator.ts";
+import { saveDraft, loadDraft } from "../lib/draftStorage.ts";
+import { IconImport, IconShare, IconSave, IconCopy } from "../components/icons.tsx";
 
 const MAX_CONVERT_BYTES = 2 * 1024 * 1024; // cap 2 MB (TECH_SPEC)
 
@@ -207,6 +209,28 @@ export default function Dashboard() {
     setActiveFolderId(r.folder_id); // env ikut folder endpoint (T9.3)
   };
 
+  // Muat draf kerja dari browser bila bukan dari share link atau replay history
+  useEffect(() => {
+    const hasShare = window.location.hash.includes("share=");
+    const hasReplay = !!(location.state as any)?.url;
+    if (hasShare || hasReplay) return;
+    const draft = loadDraft();
+    if (draft) {
+      setMethod(draft.method);
+      setUrl(draft.url);
+      setHeaders(draft.headers);
+      setParams(draft.params);
+      setBody(draft.body);
+      setAuth(draft.auth);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Autosave draf perubahan ke browser
+  useEffect(() => {
+    saveDraft({ method, url, headers, params, body, auth });
+  }, [method, url, headers, params, body, auth]);
+
   // Share link (T8.4): buka #share=<b64> → isi RequestBar identik. Tanpa DB.
   useEffect(() => {
     const m = window.location.hash.match(/share=([^&]+)/);
@@ -238,6 +262,21 @@ export default function Dashboard() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const copyCurl = async () => {
+    const ah = authHeader(auth);
+    const mergedHeaders =
+      ah && !headers.some((h) => h.key.toLowerCase() === ah.key.toLowerCase())
+        ? [...headers, ah]
+        : headers;
+    const curl = generateCurl({ method, url, headers: mergedHeaders, params, body });
+    try {
+      await navigator.clipboard.writeText(curl);
+      toast("Perintah cURL tersalin ke clipboard.", "success");
+    } catch {
+      toast("Gagal menyalin cURL.", "error");
+    }
+  };
 
   const shareLink = async () => {
     const token = encodeShare({ method, url, headers, params, body });
@@ -395,6 +434,9 @@ export default function Dashboard() {
           />
 
           <div className="flex items-center gap-1 overflow-x-auto border-b border-border bg-surface px-3 py-1.5">
+            <ToolButton onClick={copyCurl} icon={<IconCopy size={14} />}>
+              Salin cURL
+            </ToolButton>
             <ToolButton onClick={() => setCurlOpen(true)} icon={<IconImport size={14} />}>
               Import cURL
             </ToolButton>

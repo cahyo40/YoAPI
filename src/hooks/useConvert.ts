@@ -12,6 +12,7 @@ import type {
  */
 export function useConvert() {
   const workerRef = useRef<Worker | null>(null);
+  const seqRef = useRef(0);
   const samplesRef = useRef<{ key: string; list: string[] }>({ key: "", list: [] });
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -26,9 +27,12 @@ export function useConvert() {
       );
     }
     const worker = workerRef.current;
+    const currentSeq = ++seqRef.current;
     setConverting(true);
     setError(null);
     worker.onmessage = (e: MessageEvent<ConvertResponse>) => {
+      // Abaikan respons dari request usang jika sudah ada request yang lebih baru
+      if (e.data.seq !== undefined && e.data.seq !== seqRef.current) return;
       setConverting(false);
       if ("code" in e.data) setCode(e.data.code);
       else {
@@ -36,7 +40,7 @@ export function useConvert() {
         setCode("");
       }
     };
-    worker.postMessage({ samples, className, options } satisfies ConvertRequest);
+    worker.postMessage({ seq: currentSeq, samples, className, options } satisfies ConvertRequest);
   }, []);
 
   // Konversi: reset sampel bila key (className) berubah, kalau tidak akumulasi.

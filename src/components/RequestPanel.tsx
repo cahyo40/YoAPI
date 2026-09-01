@@ -305,13 +305,53 @@ export default function RequestPanel({
         )}
         {tab === "body" &&
           (hasBody ? (
-            <textarea
-              value={body}
-              onChange={(e) => onBody(e.target.value)}
-              placeholder='{"key":"value"}'
-              spellCheck={false}
-              className={fieldMono + " h-32 resize-y leading-relaxed"}
-            />
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {body.trim() && (() => {
+                    try {
+                      JSON.parse(body);
+                      return (
+                        <span className="inline-flex items-center gap-1 font-mono text-[11px] text-signal">
+                          <span className="h-1.5 w-1.5 rounded-full bg-signal" />
+                          JSON valid
+                        </span>
+                      );
+                    } catch {
+                      return (
+                        <span className="inline-flex items-center gap-1 font-mono text-[11px] text-warn">
+                          <span className="h-1.5 w-1.5 rounded-full bg-warn" />
+                          Bukan JSON valid
+                        </span>
+                      );
+                    }
+                  })()}
+                </div>
+                {body.trim() && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      try {
+                        const parsed = JSON.parse(body);
+                        onBody(JSON.stringify(parsed, null, 2));
+                      } catch {
+                        // Jangan ubah bila tidak valid
+                      }
+                    }}
+                    className="inline-flex items-center gap-1 rounded px-2 py-0.5 font-mono text-[12px] text-text-dim transition hover:bg-surface-2 hover:text-signal"
+                  >
+                    Rapikan JSON
+                  </button>
+                )}
+              </div>
+              <textarea
+                value={body}
+                onChange={(e) => onBody(e.target.value)}
+                placeholder='{"key":"value"}'
+                spellCheck={false}
+                className={fieldMono + " h-32 resize-y leading-relaxed"}
+              />
+            </div>
           ) : (
             <p className="text-[13px] text-text-faint">Body hanya untuk POST/PUT/PATCH.</p>
           ))}

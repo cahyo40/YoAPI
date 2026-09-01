@@ -9,8 +9,31 @@ const hits = new Map<string, { count: number; resetAt: number }>();
 const TIMEOUT_MS = 25_000; // di bawah batas Vercel 30 dtk
 const MAX_BYTES = 10 * 1024 * 1024; // cap response 10 MB
 
+// Hop-by-hop and forbidden proxy headers that should not be forwarded upstream
+const DISALLOWED_FORWARD_HEADERS = new Set([
+  "host",
+  "origin",
+  "referer",
+  "connection",
+  "keep-alive",
+  "transfer-encoding",
+  "content-length",
+  "te",
+  "trailer",
+  "upgrade",
+  "expect",
+  "proxy-connection",
+  "proxy-authorization",
+]);
+
 function rateLimited(ip: string): boolean {
   const now = Date.now();
+  // Prune expired records periodically when map gets large
+  if (hits.size > 200) {
+    for (const [k, v] of hits) {
+      if (now > v.resetAt) hits.delete(k);
+    }
+  }
   const rec = hits.get(ip);
   if (!rec || now > rec.resetAt) {
     hits.set(ip, { count: 1, resetAt: now + 60_000 });
@@ -61,9 +84,17 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
+  const hostname = target.hostname.replace(/^\[|\]$/g, "");
+
+  // Jika hostname sudah berupa IP langsung (IPv4 / IPv6), cek sebelum DNS lookup
+  if (isBlockedIp(hostname)) {
+    res.status(403).json({ error: "target resolves to a blocked (private) address" });
+    return;
+  }
+
   // Resolve hostname, tolak jika mengarah ke IP internal (SSRF guard).
   try {
-    const resolved = await lookup(target.hostname, { all: true });
+    const resolved = await lookup(hostname, { all: true });
     if (resolved.some((r) => isBlockedIp(r.address))) {
       res.status(403).json({ error: "target resolves to a blocked (private) address" });
       return;
@@ -73,10 +104,13 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  // Hanya forward content-type; buang host/origin agar target tak menolak.
+  // Forward semua header pengguna kecuali hop-by-hop / forbidden headers
   const fwdHeaders: Record<string, string> = {};
-  if (headers["Content-Type"] || headers["content-type"]) {
-    fwdHeaders["content-type"] = headers["Content-Type"] || headers["content-type"];
+  for (const [k, v] of Object.entries(headers)) {
+    const lk = k.toLowerCase().trim();
+    if (!DISALLOWED_FORWARD_HEADERS.has(lk) && typeof v === "string") {
+      fwdHeaders[lk] = v;
+    }
   }
 
   const ac = new AbortController();

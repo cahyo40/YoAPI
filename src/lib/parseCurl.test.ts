@@ -34,3 +34,10 @@ test("cURL -u → Authorization Basic", () => {
   assert.equal(r.headers[0].key, "Authorization");
   assert.equal(r.headers[0].value, `Basic ${btoa("user:pass")}`);
 });
+
+test("cURL -A → User-Agent header", () => {
+  const r = parseCurl("curl -A 'CustomApp/1.0' https://x.io");
+  assert.equal(r.headers.length, 1);
+  assert.equal(r.headers[0].key, "User-Agent");
+  assert.equal(r.headers[0].value, "CustomApp/1.0");
+});

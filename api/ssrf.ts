@@ -5,9 +5,10 @@ import { isIP } from "node:net";
  * (bukan string-match hostname) untuk cegah SSRF & DNS rebinding.
  */
 export function isBlockedIp(ip: string): boolean {
-  const v = isIP(ip);
+  const clean = ip.trim().replace(/^\[|\]$/g, "");
+  const v = isIP(clean);
   if (v === 4) {
-    const [a, b] = ip.split(".").map(Number);
+    const [a, b] = clean.split(".").map(Number);
     if (a === 10 || a === 127 || a === 0) return true;
     if (a === 172 && b >= 16 && b <= 31) return true;
     if (a === 192 && b === 168) return true;
@@ -16,7 +17,7 @@ export function isBlockedIp(ip: string): boolean {
     return false;
   }
   if (v === 6) {
-    const lc = ip.toLowerCase();
+    const lc = clean.toLowerCase();
     if (lc === "::1" || lc === "::") return true;
     if (lc.startsWith("fc") || lc.startsWith("fd")) return true; // ULA fc00::/7
     if (lc.startsWith("fe80")) return true; // link-local
