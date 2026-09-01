@@ -151,30 +151,36 @@ export default function ResponseView({
       </div>
 
       {response && tab === "body" && nonJson && (
-        <p className="border-b border-border px-4 py-1.5 text-[13px] text-warn" style={{ background: "color-mix(in srgb, var(--warn) 10%, transparent)" }}>
+        <p className="border-b border-border px-3 py-1 font-mono text-[11px] text-warn" style={{ background: "color-mix(in srgb, var(--warn) 10%, transparent)" }}>
           Response bukan JSON — ditampilkan mentah, konversi model dilewati.
         </p>
       )}
 
       <div className="min-h-0 flex-1">
         {error ? (
-          <div className="flex h-full flex-col items-start gap-2 p-5">
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-err">Signal lost</span>
-            <p className="font-mono text-[14px] text-err">{error}</p>
+          <div className="flex h-full flex-col items-start gap-1.5 p-4">
+            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-err">Request gagal</span>
+            <p className="font-mono text-[12px] text-err">{error}</p>
           </div>
         ) : !response ? (
           <EmptyReadout starters={starters} onSelectStarter={onSelectStarter} />
         ) : tab === "headers" ? (
           <div className="h-full overflow-auto p-4">
-            {headerCount === 0 ? (
-              <p className="font-mono text-[13px] text-text-faint">Tak ada header.</p>
+            {Object.keys(response.headers).length === 0 ? (
+              <p className="font-mono text-[12px] text-text-faint">Tidak ada header response.</p>
             ) : (
-              <table className="w-full border-collapse font-mono text-[13px]">
+              <table className="w-full border-collapse font-mono text-[12px]">
+                <thead>
+                  <tr className="border-b border-border text-left text-text-faint">
+                    <th className="pb-2 font-medium">Header</th>
+                    <th className="pb-2 font-medium">Nilai</th>
+                  </tr>
+                </thead>
                 <tbody>
-                  {Object.entries(response.headers).map(([k, v]) => (
-                    <tr key={k} className="border-b border-border/60 align-top">
-                      <td className="whitespace-nowrap py-1.5 pr-4 text-signal-dim">{k}</td>
-                      <td className="break-all py-1.5 text-text-dim">{v}</td>
+                  {Object.entries(response.headers).map(([k, v], i) => (
+                    <tr key={i} className="border-b border-border/40">
+                      <td className="py-1.5 pr-4 text-text-dim">{k}</td>
+                      <td className="break-all py-1.5 text-text">{v}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -196,9 +202,9 @@ export default function ResponseView({
             options={{
               readOnly: true,
               minimap: { enabled: false },
-              fontSize: 13,
+              fontSize: 12,
               fontFamily: "'JetBrains Mono', monospace",
-              padding: { top: 14 },
+              padding: { top: 10 },
               scrollBeyondLastLine: false,
               renderLineHighlight: "none",
               wordWrap: nonJson ? "on" : "off",
@@ -218,27 +224,27 @@ function EmptyReadout({
   onSelectStarter?: (s: { label: string; method: HttpMethod; url: string }) => void;
 }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-6 p-6 text-center">
-      <div className="flex flex-col items-center gap-2">
-        <div className="tnum font-mono text-3xl font-bold tracking-[0.15em] text-border-strong">
+    <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
+      <div className="flex flex-col items-center gap-1.5">
+        <div className="tnum font-mono text-2xl font-bold tracking-[0.15em] text-border-strong">
           — — —
         </div>
-        <p className="max-w-[28ch] text-[13px] text-text-faint">
+        <p className="max-w-[28ch] font-mono text-[12px] text-text-faint">
           Kirim request untuk menyalakan readout & model.
         </p>
       </div>
 
       {starters && starters.length > 0 && onSelectStarter && (
-        <div className="flex max-w-sm flex-col items-center gap-2.5 rounded-panel border border-border/80 bg-surface/80 p-3.5 shadow-panel">
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-faint">
-            Kalibrasi Cepat
+        <div className="mt-2 flex flex-col items-center gap-2">
+          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-faint">
+            Coba Contoh API Publik
           </span>
-          <div className="flex flex-wrap justify-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
             {starters.map((s) => (
               <button
-                key={s.url}
+                key={s.label}
                 onClick={() => onSelectStarter(s)}
-                className="group inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-2.5 py-1 text-[12px] text-text-dim transition hover:border-signal-dim hover:text-text"
+                className="group inline-flex items-center gap-1.5 rounded-md border border-border bg-surface-2 px-2 py-1 font-mono text-[11px] text-text-dim transition hover:border-signal-dim hover:text-text"
               >
                 <span
                   className="tnum font-mono text-[10px] font-bold"

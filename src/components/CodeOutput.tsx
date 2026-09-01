@@ -1,10 +1,10 @@
 import Editor from "@monaco-editor/react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { ConvertOptions, TargetLang } from "../types.ts";
 import { defineMonacoThemes } from "../lib/monacoTheme.ts";
 import { useToast } from "./Toast.tsx";
 import { panelLabel } from "./ui.ts";
-import { IconCopy, IconCheck, IconDownload } from "./icons.tsx";
+import { IconCopy, IconCheck, IconDownload, IconSliders, IconX } from "./icons.tsx";
 
 const LANGS: { v: TargetLang; label: string; ext: string; monaco: string }[] = [
   { v: "dart", label: "Dart", ext: "dart", monaco: "dart" },
@@ -18,43 +18,71 @@ const LANGS: { v: TargetLang; label: string; ext: string; monaco: string }[] = [
   { v: "rust", label: "Rust", ext: "rs", monaco: "rust" },
 ];
 
-/** Small toggle chip — used for Dart generator flags. */
-function Toggle({
+function snake(s: string) {
+  return (
+    s
+      .replace(/([a-z])([A-Z])/g, "$1_$2")
+      .replace(/[-\s]+/g, "_")
+      .toLowerCase() || "model"
+  );
+}
+
+/** Interactive switch row inside options popover */
+function OptionRow({
   label,
+  description,
   checked,
   disabled,
-  title,
+  disabledReason,
   onChange,
 }: {
   label: string;
+  description: string;
   checked: boolean;
   disabled?: boolean;
-  title?: string;
+  disabledReason?: string;
   onChange: (v: boolean) => void;
 }) {
   return (
     <label
-      title={title}
-      className={`flex h-7 cursor-pointer select-none items-center gap-1.5 whitespace-nowrap rounded-md border px-2 font-mono text-[11px] transition ${
+      className={`group flex cursor-pointer items-start justify-between gap-3 rounded-md p-2 transition ${
         disabled
-          ? "cursor-not-allowed border-border/60 text-text-faint opacity-50"
-          : checked
-            ? "border-signal-dim bg-signal/10 text-signal"
-            : "border-border text-text-dim hover:border-border-strong hover:text-text"
+          ? "cursor-not-allowed opacity-50 bg-transparent"
+          : "hover:bg-surface-2/70 active:bg-surface-2"
       }`}
     >
-      <input
-        type="checkbox"
-        className="sr-only"
-        checked={checked}
-        disabled={disabled}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span
-        aria-hidden
-        className={`h-1.5 w-1.5 shrink-0 rounded-full ${checked && !disabled ? "bg-signal" : "bg-border-strong"}`}
-      />
-      {label}
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-1.5">
+          <span className="font-mono text-[12px] font-semibold text-text group-hover:text-signal">
+            {label}
+          </span>
+        </div>
+        <p className="mt-0.5 text-[11px] leading-tight text-text-dim">{description}</p>
+        {disabled && disabledReason && (
+          <p className="mt-1 font-mono text-[10px] text-warn">{disabledReason}</p>
+        )}
+      </div>
+
+      <div className="relative inline-flex shrink-0 items-center pt-0.5">
+        <input
+          type="checkbox"
+          className="sr-only peer"
+          checked={checked}
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.checked)}
+        />
+        <div
+          className={`h-4 w-7 rounded-full transition-colors ${
+            checked && !disabled ? "bg-signal" : "bg-border-strong"
+          }`}
+        >
+          <div
+            className={`h-3 w-3 rounded-full bg-surface transition-transform duration-150 ${
+              checked && !disabled ? "translate-x-3.5" : "translate-x-0.5"
+            } mt-0.5`}
+          />
+        </div>
+      </div>
     </label>
   );
 }
@@ -81,11 +109,55 @@ export default function CodeOutput({
   onClassName: (name: string) => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
+
   const lang = LANGS.find((l) => l.v === options.target) ?? LANGS[0];
   const isDart = options.target === "dart";
   const eqDisabled = options.freezed || options.jsonAnnotation;
   const set = (patch: Partial<ConvertOptions>) => onOptions({ ...options, ...patch });
+
+  // Count active flags
+  let activeCount = 0;
+  let hasOptions = true;
+  if (isDart) {
+    if (options.nullSafety) activeCount++;
+    if (options.freezed) activeCount++;
+    if (options.jsonAnnotation) activeCount++;
+    if (options.copyWith) activeCount++;
+    if (options.equatable && !eqDisabled) activeCount++;
+  } else if (options.target === "python") {
+    if (options.pythonPydantic) activeCount++;
+  } else if (options.target === "java") {
+    if (options.javaLombok) activeCount++;
+  } else if (options.target === "csharp") {
+    if (options.csharpSystemText) activeCount++;
+  } else if (options.target === "rust") {
+    if (options.rustDerive) activeCount++;
+  } else {
+    hasOptions = false;
+  }
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+        setOptionsOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOptionsOpen(false);
+    }
+    if (optionsOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [optionsOpen]);
 
   const copy = async () => {
     await navigator.clipboard.writeText(code);
@@ -105,14 +177,16 @@ export default function CodeOutput({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex h-9 shrink-0 items-center justify-between border-b border-border bg-surface px-3 sm:px-4">
-        <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
+      {/* Title bar — symmetrical h-9 matched with ResponseView, zero scroll */}
+      <div className="relative flex h-9 shrink-0 items-center justify-between border-b border-border bg-surface px-3 sm:px-4">
+        {/* Left Side: Label, Language, Class Name */}
+        <div className="flex min-w-0 items-center gap-1.5">
           <span className={`${panelLabel} shrink-0`}>Model</span>
 
           <select
             value={options.target}
             onChange={(e) => onOptions({ ...options, target: e.target.value as TargetLang })}
-            className="h-6.5 shrink-0 cursor-pointer rounded-md border border-border bg-surface-2 px-1.5 font-mono text-[11px] font-semibold text-signal focus:border-signal-dim focus:outline-none"
+            className="h-6.5 shrink-0 cursor-pointer rounded-md border border-border bg-surface-2 px-1.5 font-mono text-[11px] font-semibold text-signal transition focus:border-signal-dim focus:outline-none"
             aria-label="Bahasa target"
           >
             {LANGS.map((l) => (
@@ -128,89 +202,142 @@ export default function CodeOutput({
             placeholder="Nama class"
             spellCheck={false}
             aria-label="Nama class model"
-            className="h-6.5 w-28 min-w-[100px] shrink-0 rounded-md border border-border bg-surface-2 px-2 font-mono text-[11px] text-text placeholder:text-text-faint focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:w-36"
+            className="h-6.5 w-24 min-w-[90px] rounded-md border border-border bg-surface-2 px-2 font-mono text-[11px] text-text placeholder:text-text-faint transition focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:w-32"
           />
-
-          <div className="flex shrink-0 items-center gap-1">
-            {isDart && (
-              <>
-                <Toggle
-                  label="Null Safety"
-                  checked={options.nullSafety}
-                  onChange={(v) => onOptions({ ...options, nullSafety: v })}
-                />
-                <Toggle
-                  label="Freezed"
-                  checked={options.freezed}
-                  onChange={(v) => onOptions({ ...options, freezed: v })}
-                />
-                <Toggle
-                  label="json_serializable"
-                  checked={options.jsonAnnotation}
-                  onChange={(v) => onOptions({ ...options, jsonAnnotation: v })}
-                />
-                <Toggle
-                  label="copyWith"
-                  checked={options.copyWith}
-                  onChange={(v) => onOptions({ ...options, copyWith: v })}
-                />
-                <Toggle
-                  label="Equatable"
-                  checked={options.equatable && !eqDisabled}
-                  disabled={eqDisabled}
-                  title={
-                    eqDisabled
-                      ? "Equatable hanya untuk output plain (matikan Freezed & json_serializable)"
-                      : undefined
-                  }
-                  onChange={(v) => onOptions({ ...options, equatable: v })}
-                />
-              </>
-            )}
-
-            {options.target === "python" && (
-              <Toggle
-                label="Pydantic"
-                title="Pakai pydantic BaseModel (validasi runtime), bukan dataclass biasa"
-                checked={options.pythonPydantic}
-                onChange={(v) => set({ pythonPydantic: v })}
-              />
-            )}
-            {options.target === "java" && (
-              <Toggle
-                label="Lombok"
-                title="Pakai anotasi Lombok (@Data) — kurangi boilerplate getter/setter"
-                checked={options.javaLombok}
-                onChange={(v) => set({ javaLombok: v })}
-              />
-            )}
-            {options.target === "csharp" && (
-              <Toggle
-                label="System.Text.Json"
-                title="Pakai System.Text.Json (default .NET), bukan Newtonsoft.Json"
-                checked={options.csharpSystemText}
-                onChange={(v) => set({ csharpSystemText: v })}
-              />
-            )}
-            {options.target === "rust" && (
-              <Toggle
-                label="derive Debug/Clone"
-                title="Tambah #[derive(Debug, Clone)] ke tiap struct"
-                checked={options.rustDerive}
-                onChange={(v) => set({ rustDerive: v })}
-              />
-            )}
-          </div>
         </div>
 
-        <div className="ml-1.5 flex shrink-0 items-center gap-1">
+        {/* Right Side: Options Popover Trigger, Copy, Download */}
+        <div className="flex shrink-0 items-center gap-1">
+          {hasOptions && (
+            <div className="relative" ref={popoverRef}>
+              <button
+                type="button"
+                onClick={() => setOptionsOpen((prev) => !prev)}
+                className={`inline-flex h-6.5 items-center gap-1 rounded-md border px-2 font-mono text-[11px] font-medium transition ${
+                  optionsOpen
+                    ? "border-signal-dim bg-signal/15 text-signal"
+                    : activeCount > 0
+                      ? "border-border-strong bg-surface-2 text-signal hover:border-signal-dim"
+                      : "border-border bg-surface-2 text-text-dim hover:border-border-strong hover:text-text"
+                }`}
+                title="Konfigurasi generator kode"
+                aria-expanded={optionsOpen}
+                aria-label="Buka opsi generator"
+              >
+                <IconSliders size={12} className={activeCount > 0 ? "text-signal" : "text-text-dim"} />
+                <span className="hidden sm:inline">Opsi</span>
+                {activeCount > 0 && (
+                  <span className="grid h-3.5 min-w-[14px] place-items-center rounded-full bg-signal px-1 font-mono text-[9px] font-bold text-on-signal">
+                    {activeCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Impeccable Options Popover Dropdown */}
+              {optionsOpen && (
+                <div
+                  className="absolute right-0 top-full z-50 mt-1.5 w-72 origin-top-right rounded-lg border border-border bg-surface p-2.5 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-150 sm:w-80"
+                  style={{ boxShadow: "0 12px 32px -4px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border)" }}
+                >
+                  <div className="mb-2 flex items-center justify-between border-b border-border pb-1.5 px-1">
+                    <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-text">
+                      Opsi {lang.label}
+                    </span>
+                    <button
+                      onClick={() => setOptionsOpen(false)}
+                      className="rounded p-0.5 text-text-faint transition hover:bg-surface-2 hover:text-text"
+                      aria-label="Tutup opsi"
+                    >
+                      <IconX size={12} />
+                    </button>
+                  </div>
+
+                  <div className="space-y-0.5">
+                    {isDart && (
+                      <>
+                        <OptionRow
+                          label="Null Safety"
+                          description="Gunakan tipe null-safe (? dan required)"
+                          checked={options.nullSafety}
+                          onChange={(v) => set({ nullSafety: v })}
+                        />
+                        <OptionRow
+                          label="Freezed"
+                          description="Generate class immutable dengan union & pattern matching"
+                          checked={options.freezed}
+                          onChange={(v) => set({ freezed: v })}
+                        />
+                        <OptionRow
+                          label="json_serializable"
+                          description="Generate konverter @JsonSerializable()"
+                          checked={options.jsonAnnotation}
+                          onChange={(v) => set({ jsonAnnotation: v })}
+                        />
+                        <OptionRow
+                          label="copyWith"
+                          description="Method salin & ubah properti objek"
+                          checked={options.copyWith}
+                          onChange={(v) => set({ copyWith: v })}
+                        />
+                        <OptionRow
+                          label="Equatable"
+                          description="Value equality tanpa boilerplate props"
+                          checked={options.equatable && !eqDisabled}
+                          disabled={eqDisabled}
+                          disabledReason="Matikan Freezed & json_serializable untuk Equatable"
+                          onChange={(v) => set({ equatable: v })}
+                        />
+                      </>
+                    )}
+
+                    {options.target === "python" && (
+                      <OptionRow
+                        label="Pydantic BaseModel"
+                        description="Validasi tipe runtime otomatis berbasis Pydantic"
+                        checked={options.pythonPydantic}
+                        onChange={(v) => set({ pythonPydantic: v })}
+                      />
+                    )}
+
+                    {options.target === "java" && (
+                      <OptionRow
+                        label="Lombok @Data"
+                        description="Gunakan anotasi Lombok untuk ringkas getter/setter"
+                        checked={options.javaLombok}
+                        onChange={(v) => set({ javaLombok: v })}
+                      />
+                    )}
+
+                    {options.target === "csharp" && (
+                      <OptionRow
+                        label="System.Text.Json"
+                        description="Gunakan library serialization default .NET modern"
+                        checked={options.csharpSystemText}
+                        onChange={(v) => set({ csharpSystemText: v })}
+                      />
+                    )}
+
+                    {options.target === "rust" && (
+                      <OptionRow
+                        label="derive Debug/Clone"
+                        description="Tambahkan #[derive(Debug, Clone, Serialize, Deserialize)]"
+                        checked={options.rustDerive}
+                        onChange={(v) => set({ rustDerive: v })}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <button
             onClick={copy}
             disabled={!code}
             className="inline-flex h-6.5 items-center gap-1 rounded-md px-2 font-mono text-[11px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-text-dim"
           >
             {copied ? <IconCheck size={12} /> : <IconCopy size={12} />}
-            {copied ? "Tersalin" : "Copy"}
+            <span className="hidden xs:inline">{copied ? "Tersalin" : "Copy"}</span>
           </button>
           <button
             onClick={download}
@@ -226,16 +353,16 @@ export default function CodeOutput({
 
       {isDart && eqDisabled && code && (
         <p
-          className="border-b border-border px-4 py-1.5 text-[13px] text-signal"
+          className="border-b border-border px-3 py-1 font-mono text-[11px] text-signal"
           style={{ background: "color-mix(in srgb, var(--signal) 8%, transparent)" }}
         >
-          Jalankan <code className="font-mono">dart run build_runner build</code> untuk generate{" "}
-          <code className="font-mono">.freezed.dart</code> / <code className="font-mono">.g.dart</code>.
+          Jalankan <code className="font-bold">dart run build_runner build</code> untuk generate{" "}
+          <code>.freezed.dart</code> / <code>.g.dart</code>.
         </p>
       )}
       {sampleCount > 1 && code && (
         <p
-          className="border-b border-border px-4 py-1.5 text-[13px] text-ok"
+          className="border-b border-border px-3 py-1 font-mono text-[11px] text-ok"
           style={{ background: "color-mix(in srgb, var(--ok) 8%, transparent)" }}
         >
           Model digabung dari {sampleCount} sampel — field yang tak selalu ada jadi opsional.
@@ -244,13 +371,13 @@ export default function CodeOutput({
 
       <div className="min-h-0 flex-1">
         {error ? (
-          <div className="flex h-full flex-col items-start gap-2 p-5">
+          <div className="flex h-full flex-col items-start gap-1.5 p-4">
             <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-err">Konversi gagal</span>
-            <p className="font-mono text-[14px] text-err">{error}</p>
+            <p className="font-mono text-[12px] text-err">{error}</p>
           </div>
         ) : converting ? (
           <div className="flex h-full items-center justify-center">
-            <span className="signal-live font-mono text-[13px] uppercase tracking-[0.14em] text-signal">
+            <span className="signal-live font-mono text-[12px] uppercase tracking-[0.14em] text-signal">
               Mengonversi…
             </span>
           </div>
@@ -265,17 +392,17 @@ export default function CodeOutput({
             options={{
               readOnly: true,
               minimap: { enabled: false },
-              fontSize: 13,
+              fontSize: 12,
               fontFamily: "'JetBrains Mono', monospace",
-              padding: { top: 14 },
+              padding: { top: 10 },
               scrollBeyondLastLine: false,
               renderLineHighlight: "none",
             }}
           />
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
-            <div className="font-mono text-2xl font-bold tracking-[0.15em] text-border-strong">{"{ }"}</div>
-            <p className="max-w-[30ch] text-[14px] text-text-faint">
+          <div className="flex h-full flex-col items-center justify-center gap-2 px-6 text-center">
+            <div className="font-mono text-xl font-bold tracking-[0.15em] text-border-strong">{"{ }"}</div>
+            <p className="max-w-[30ch] font-mono text-[12px] text-text-faint">
               Model {lang.label} ter-generate otomatis setelah response JSON.
             </p>
           </div>
@@ -283,8 +410,4 @@ export default function CodeOutput({
       </div>
     </div>
   );
-}
-
-function snake(s: string): string {
-  return s.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase() || "model";
 }
