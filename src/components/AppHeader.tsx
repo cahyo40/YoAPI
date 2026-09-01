@@ -1,9 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import type { User } from "@supabase/supabase-js";
-import { IconConsole, IconClock, IconSun, IconMoon, IconLogout, IconMenu } from "./icons.tsx";
+import { IconConsole, IconClock, IconInfo, IconSun, IconMoon, IconLogout, IconMenu } from "./icons.tsx";
 
 /**
- * Instrument header — wordmark + logo, Console/History nav, theme switch,
+ * Instrument header — wordmark + logo, Console/History/About nav, theme switch,
  * session identity (avatar + email) + control. Shared across Dashboard and
  * History so the case feels continuous (craft floor: same chrome screen to screen).
  * onMenu (opsional): tampilkan tombol hamburger (mobile) untuk buka sidebar.
@@ -49,6 +49,9 @@ export default function AppHeader({
         </NavLink>
         <NavLink to="/history" active={pathname === "/history"} icon={<IconClock size={15} />}>
           History
+        </NavLink>
+        <NavLink to="/about" active={pathname === "/about"} icon={<IconInfo size={15} />}>
+          About
         </NavLink>
       </nav>
 
