@@ -51,15 +51,15 @@ export default function Sidebar({
       return next;
     });
 
-  // Kelas panel: statis di desktop (md+), drawer off-canvas di mobile.
+  // Kelas panel: statis di desktop (lg+), drawer off-canvas di tablet/mobile.
   const shell =
-    "fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] transform border-r border-border bg-surface " +
-    "shadow-panel transition-transform duration-200 md:static md:z-auto md:w-64 md:max-w-none md:transform-none md:shadow-none " +
-    (open ? "translate-x-0" : "-translate-x-full md:translate-x-0");
-  // Backdrop hanya di mobile saat drawer terbuka.
+    "fixed inset-y-0 left-0 z-40 w-64 max-w-[85vw] transform border-r border-border bg-surface " +
+    "shadow-panel transition-transform duration-200 lg:static lg:z-auto lg:w-56 lg:max-w-none lg:transform-none lg:shadow-none " +
+    (open ? "translate-x-0" : "-translate-x-full lg:translate-x-0");
+  // Backdrop hanya di mobile/tablet saat drawer terbuka.
   const backdrop = open ? (
     <div
-      className="fixed inset-0 z-30 bg-black/50 md:hidden"
+      className="fixed inset-0 z-30 bg-black/50 lg:hidden"
       onClick={onClose}
       aria-hidden
     />
@@ -69,16 +69,16 @@ export default function Sidebar({
     return (
       <>
         {backdrop}
-        <aside className={shell + " flex shrink-0 flex-col gap-4 p-4"}>
+        <aside className={shell + " flex shrink-0 flex-col gap-3 p-3"}>
           <span className={panelLabel}>Collections</span>
-          <div className="rounded-panel border border-border bg-surface-2 p-4">
-            <IconFolder size={20} className="text-text-faint" />
-            <p className="mt-2.5 text-[14px] leading-relaxed text-text-dim">
+          <div className="rounded-md border border-border bg-surface-2 p-3">
+            <IconFolder size={18} className="text-text-faint" />
+            <p className="mt-2 text-[12px] leading-relaxed text-text-dim">
               Simpan endpoint & organisasi folder butuh akun.
             </p>
             <Link
               to="/login"
-              className="mt-3.5 inline-flex w-full items-center justify-center rounded-lg bg-signal px-3 py-2 font-mono text-[13px] font-semibold uppercase tracking-[0.06em] text-on-signal shadow-glow transition hover:brightness-110"
+              className="mt-3 inline-flex w-full items-center justify-center rounded-md bg-signal px-2.5 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-on-signal shadow-glow transition hover:brightness-110"
             >
               Login untuk simpan
             </Link>
@@ -92,7 +92,7 @@ export default function Sidebar({
     <>
       {backdrop}
       <aside className={shell + " flex shrink-0 flex-col overflow-hidden"}>
-      <div className="flex items-center gap-2 border-b border-border px-4 py-3">
+      <div className="flex items-center gap-1.5 border-b border-border px-3 py-2">
         <input
           value={newFolder}
           onChange={(e) => setNewFolder(e.target.value)}
@@ -103,7 +103,7 @@ export default function Sidebar({
             }
           }}
           placeholder="Folder baru"
-          className={field + " py-1.5 text-[14px]"}
+          className={field + " py-1 text-[12px]"}
         />
         <button
           onClick={() => {
@@ -112,17 +112,17 @@ export default function Sidebar({
               setNewFolder("");
             }
           }}
-          className="shrink-0 rounded-lg border border-border bg-surface-2 p-2 text-text-dim transition hover:border-signal-dim hover:text-signal"
+          className="shrink-0 rounded-md border border-border bg-surface-2 p-1.5 text-text-dim transition hover:border-signal-dim hover:text-signal"
           aria-label="Tambah folder"
         >
-          <IconPlus size={16} />
+          <IconPlus size={14} />
         </button>
         <button
           onClick={onClose}
-          className="shrink-0 rounded-lg border border-border bg-surface-2 p-2 text-text-dim transition hover:border-signal-dim hover:text-signal md:hidden"
+          className="shrink-0 rounded-md border border-border bg-surface-2 p-1.5 text-text-dim transition hover:border-signal-dim hover:text-signal lg:hidden"
           aria-label="Tutup panel"
         >
-          <IconX size={16} />
+          <IconX size={14} />
         </button>
       </div>
 

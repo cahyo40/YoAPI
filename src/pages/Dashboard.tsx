@@ -432,18 +432,18 @@ export default function Dashboard() {
             onEnv={setEnvVars}
           />
 
-          <div className="flex items-center gap-1 overflow-x-auto border-b border-border bg-surface px-3 py-1.5">
-            <ToolButton onClick={copyCurl} icon={<IconCopy size={14} />}>
+          <div className="flex h-7.5 shrink-0 items-center gap-1 overflow-x-auto border-b border-border bg-surface px-3">
+            <ToolButton onClick={copyCurl} icon={<IconCopy size={13} />}>
               Salin cURL
             </ToolButton>
-            <ToolButton onClick={() => setCurlOpen(true)} icon={<IconImport size={14} />}>
+            <ToolButton onClick={() => setCurlOpen(true)} icon={<IconImport size={13} />}>
               Import cURL
             </ToolButton>
-            <ToolButton onClick={shareLink} icon={<IconShare size={14} />}>
+            <ToolButton onClick={shareLink} icon={<IconShare size={13} />}>
               Share link
             </ToolButton>
             {user && (
-              <ToolButton onClick={openSave} icon={<IconSave size={14} />}>
+              <ToolButton onClick={openSave} icon={<IconSave size={13} />}>
                 Simpan ke folder
               </ToolButton>
             )}
@@ -454,24 +454,24 @@ export default function Dashboard() {
                     ? toast("Buat folder dulu di sidebar.", "error")
                     : setPostmanOpen(true)
                 }
-                icon={<IconImport size={14} />}
+                icon={<IconImport size={13} />}
               >
                 Import Postman
               </ToolButton>
             )}
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto md:grid-cols-2 md:overflow-hidden">
-            <div className="flex min-h-[60vh] min-w-0 flex-col border-b border-border md:min-h-0 md:border-b-0 md:border-r">
+          <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto lg:grid-cols-2 lg:overflow-hidden">
+            <div className="flex min-h-[50vh] min-w-0 flex-col border-b border-border lg:min-h-0 lg:border-b-0 lg:border-r">
               {localBanner && (
                 <p
-                  className="border-b border-border px-4 py-1.5 text-[13px] text-info"
+                  className="border-b border-border px-3 py-1 text-[12px] text-info"
                   style={{ background: "color-mix(in srgb, var(--info) 10%, transparent)" }}
                 >
                   Target localhost belum didukung (perlu browser extension, v1.1).
                 </p>
               )}
-              <div className="min-h-[40vh] flex-1 md:min-h-0">
+              <div className="min-h-[40vh] flex-1 lg:min-h-0">
                 <ResponseView
                   response={response}
                   error={localBanner ? null : reqError}
@@ -485,7 +485,7 @@ export default function Dashboard() {
                 />
               </div>
             </div>
-            <div className="flex min-h-[60vh] min-w-0 flex-col md:min-h-0">
+            <div className="flex min-h-[50vh] min-w-0 flex-col lg:min-h-0">
               <DartOutput
                 code={code}
                 className={className}
@@ -573,7 +573,7 @@ function ToolButton({
   return (
     <button
       onClick={onClick}
-      className="inline-flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[13px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal"
+      className="inline-flex h-6 shrink-0 items-center gap-1 rounded px-2 font-mono text-[11px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal"
     >
       {icon}
       {children}

@@ -135,70 +135,70 @@ export default function About() {
 
       <main className="flex-1">
         {/* HERO SECTION */}
-        <section className="relative overflow-hidden border-b border-border px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
-          <div className="mx-auto max-w-5xl text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-signal-dim/40 bg-signal/10 px-3.5 py-1 font-mono text-[12px] uppercase tracking-[0.14em] text-signal shadow-glow">
+        <section className="relative overflow-hidden border-b border-border px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+          <div className="mx-auto max-w-6xl text-center">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-signal-dim/40 bg-signal/10 px-3 py-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-signal shadow-glow">
               <span className="h-1.5 w-1.5 rounded-full bg-signal animate-pulse" />
               Nol Instalasi • 100% Client-Side Privacy • Multi-Language Model
             </div>
 
-            <h1 className="text-3xl font-bold tracking-tight text-text sm:text-5xl lg:text-6xl">
+            <h1 className="text-2xl font-bold tracking-tight text-text sm:text-4xl lg:text-5xl">
               Dari Endpoint ke Model Bertipe{" "}
               <span className="text-signal">dalam Satu Tarikan Napas</span>
             </h1>
 
-            <p className="mx-auto mt-6 max-w-3xl text-[16px] leading-relaxed text-text-dim sm:text-[18px]">
+            <p className="mx-auto mt-4 max-w-3xl text-[14px] leading-relaxed text-text-dim sm:text-[16px]">
               Platform pengujian REST API berbasis web yang mengeksekusi HTTP request via proxy serverless
               (bypass CORS) lalu mengonversi respons JSON secara instan menjadi model bertipe ketat
               untuk <strong>Dart (Flutter), Kotlin, Swift, TypeScript, Go, Python, Java, C#, dan Rust</strong>.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5 sm:mt-10">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:mt-8">
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 rounded-xl bg-signal px-6 py-3 font-mono text-[14px] font-bold tracking-wide text-on-signal shadow-glow transition hover:brightness-110"
+                className="inline-flex items-center gap-2 rounded-lg bg-signal px-5 py-2.5 font-mono text-[13px] font-bold tracking-wide text-on-signal shadow-glow transition hover:brightness-110"
               >
-                <IconConsole size={18} />
+                <IconConsole size={16} />
                 Buka Console (Gratis Tanpa Login)
               </Link>
               <a
                 href="https://github.com/cahyo40/YoAPI"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-border-strong bg-surface-2 px-5 py-3 text-[14px] font-medium text-text-dim transition hover:border-signal-dim hover:text-text"
+                className="inline-flex items-center gap-2 rounded-lg border border-border-strong bg-surface-2 px-4 py-2.5 text-[13px] font-medium text-text-dim transition hover:border-signal-dim hover:text-text"
               >
                 Dokumentasi GitHub
               </a>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-6 font-mono text-[12px] text-text-faint sm:gap-10">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4 font-mono text-[11px] text-text-faint sm:gap-8">
               <span className="inline-flex items-center gap-1.5">
-                <IconCheck size={14} className="text-signal" /> Zero Install (Web SPA)
+                <IconCheck size={13} className="text-signal" /> Zero Install (Web SPA)
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <IconCheck size={14} className="text-signal" /> Bypass CORS Otomatis
+                <IconCheck size={13} className="text-signal" /> Bypass CORS Otomatis
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <IconCheck size={14} className="text-signal" /> Web Worker Sandboxed
+                <IconCheck size={13} className="text-signal" /> Web Worker Sandboxed
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <IconCheck size={14} className="text-signal" /> Export 1 Folder ke ZIP
+                <IconCheck size={13} className="text-signal" /> Export 1 Folder ke ZIP
               </span>
             </div>
           </div>
         </section>
 
         {/* CODE & MODEL LIVE SHOWCASE */}
-        <section className="border-b border-border bg-surface/40 px-4 py-16 sm:px-6 lg:py-20">
-          <div className="mx-auto max-w-5xl">
-            <div className="mb-10 text-center">
-              <span className="font-mono text-[12px] uppercase tracking-[0.16em] text-signal">
+        <section className="border-b border-border bg-surface/40 px-4 py-12 sm:px-6 lg:py-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-8 text-center">
+              <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-signal">
                 Interactive Generation
               </span>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-text sm:text-3xl">
+              <h2 className="mt-1.5 text-xl font-bold tracking-tight text-text sm:text-2xl">
                 JSON Mentah $\rightarrow$ Model Bertipe Siap Tempel
               </h2>
-              <p className="mt-2 text-[14px] text-text-dim">
+              <p className="mt-1.5 text-[13px] text-text-dim">
                 Lihat bagaimana respons JSON diubah seketika menjadi struktur model dengan gaya koding modern.
               </p>
             </div>

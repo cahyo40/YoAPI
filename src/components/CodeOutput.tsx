@@ -105,14 +105,14 @@ export default function CodeOutput({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-3 sm:px-4">
-        <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto">
+      <div className="flex h-9 shrink-0 items-center justify-between border-b border-border bg-surface px-3 sm:px-4">
+        <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
           <span className={`${panelLabel} shrink-0`}>Model</span>
 
           <select
             value={options.target}
             onChange={(e) => onOptions({ ...options, target: e.target.value as TargetLang })}
-            className="h-7 shrink-0 cursor-pointer rounded-md border border-border bg-surface-2 px-2 font-mono text-[12px] font-semibold text-signal focus:border-signal-dim focus:outline-none"
+            className="h-6.5 shrink-0 cursor-pointer rounded-md border border-border bg-surface-2 px-1.5 font-mono text-[11px] font-semibold text-signal focus:border-signal-dim focus:outline-none"
             aria-label="Bahasa target"
           >
             {LANGS.map((l) => (
@@ -128,7 +128,7 @@ export default function CodeOutput({
             placeholder="Nama class"
             spellCheck={false}
             aria-label="Nama class model"
-            className="h-7 w-32 min-w-[120px] shrink-0 rounded-md border border-border bg-surface-2 px-2.5 font-mono text-[12px] text-text placeholder:text-text-faint focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:w-44"
+            className="h-6.5 w-28 min-w-[100px] shrink-0 rounded-md border border-border bg-surface-2 px-2 font-mono text-[11px] text-text placeholder:text-text-faint focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:w-36"
           />
 
           <div className="flex shrink-0 items-center gap-1">
@@ -203,22 +203,22 @@ export default function CodeOutput({
           </div>
         </div>
 
-        <div className="ml-2 flex shrink-0 items-center gap-1">
+        <div className="ml-1.5 flex shrink-0 items-center gap-1">
           <button
             onClick={copy}
             disabled={!code}
-            className="inline-flex h-7 items-center gap-1 rounded-md px-2.5 font-mono text-[12px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-text-dim"
+            className="inline-flex h-6.5 items-center gap-1 rounded-md px-2 font-mono text-[11px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-text-dim"
           >
-            {copied ? <IconCheck size={13} /> : <IconCopy size={13} />}
+            {copied ? <IconCheck size={12} /> : <IconCopy size={12} />}
             {copied ? "Tersalin" : "Copy"}
           </button>
           <button
             onClick={download}
             disabled={!code}
-            className="inline-flex h-7 items-center gap-1 rounded-md px-2.5 font-mono text-[12px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-text-dim"
+            className="inline-flex h-6.5 items-center gap-1 rounded-md px-2 font-mono text-[11px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-text-dim"
             title={`Unduh file ${lang.ext}`}
           >
-            <IconDownload size={13} />
+            <IconDownload size={12} />
             <span className="hidden sm:inline">Download</span>
           </button>
         </div>

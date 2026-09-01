@@ -251,13 +251,14 @@ export default function RequestPanel({
   folders: Folder[];
   activeFolderId: string | null;
   onActiveFolder: (id: string | null) => void;
-  onHeaders: (p: HeaderPair[]) => void;
+  onHeaders: (h: HeaderPair[]) => void;
   onParams: (p: HeaderPair[]) => void;
   onBody: (b: string) => void;
   onAuth: (a: AuthConfig) => void;
-  onEnv: (e: EnvVar[]) => void;
+  onEnv: (vars: EnvVar[]) => void;
 }) {
   const [tab, setTab] = useState<Tab>("params");
+  const [open, setOpen] = useState(true);
   const hasBody = ["POST", "PUT", "PATCH"].includes(method);
   const tabs: Tab[] = ["params", "headers", "auth", "body", "env"];
 
@@ -267,95 +268,120 @@ export default function RequestPanel({
     env: env.filter((v) => v.key).length,
   };
 
+  const selectTab = (t: Tab) => {
+    if (tab === t) {
+      setOpen((prev) => !prev);
+    } else {
+      setTab(t);
+      setOpen(true);
+    }
+  };
+
   return (
     <div className="flex flex-col border-b border-border bg-surface">
-      <div className="flex gap-0.5 border-b border-border px-3">
-        {tabs.map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`relative flex items-center gap-1.5 px-3 py-2.5 font-mono text-[13px] uppercase tracking-[0.06em] transition ${
-              tab === t ? "text-signal" : "text-text-faint hover:text-text-dim"
-            }`}
-          >
-            {TAB_LABEL[t]}
-            {count[t] ? (
-              <span className="tnum rounded-full bg-surface-2 px-1.5 text-[11px] text-text-dim">
-                {count[t]}
-              </span>
-            ) : null}
-            {tab === t && (
-              <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-signal" style={{ boxShadow: "0 0 8px var(--signal)" }} />
-            )}
-          </button>
-        ))}
-      </div>
-      <div className="p-3.5">
-        {tab === "params" && <PairEditor pairs={params} onChange={onParams} keyPlaceholder="param" />}
-        {tab === "headers" && <PairEditor pairs={headers} onChange={onHeaders} keyPlaceholder="header" />}
-        {tab === "auth" && <AuthEditor auth={auth} onChange={onAuth} />}
-        {tab === "env" && (
-          <EnvEditor
-            vars={env}
-            onChange={onEnv}
-            folders={folders}
-            activeFolderId={activeFolderId}
-            onActiveFolder={onActiveFolder}
-          />
-        )}
-        {tab === "body" &&
-          (hasBody ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {body.trim() && (() => {
-                    try {
-                      JSON.parse(body);
-                      return (
-                        <span className="inline-flex items-center gap-1 font-mono text-[11px] text-signal">
-                          <span className="h-1.5 w-1.5 rounded-full bg-signal" />
-                          JSON valid
-                        </span>
-                      );
-                    } catch {
-                      return (
-                        <span className="inline-flex items-center gap-1 font-mono text-[11px] text-warn">
-                          <span className="h-1.5 w-1.5 rounded-full bg-warn" />
-                          Bukan JSON valid
-                        </span>
-                      );
-                    }
-                  })()}
-                </div>
-                {body.trim() && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      try {
-                        const parsed = JSON.parse(body);
-                        onBody(JSON.stringify(parsed, null, 2));
-                      } catch {
-                        // Jangan ubah bila tidak valid
-                      }
-                    }}
-                    className="inline-flex items-center gap-1 rounded px-2 py-0.5 font-mono text-[12px] text-text-dim transition hover:bg-surface-2 hover:text-signal"
-                  >
-                    Rapikan JSON
-                  </button>
-                )}
-              </div>
-              <textarea
-                value={body}
-                onChange={(e) => onBody(e.target.value)}
-                placeholder='{"key":"value"}'
-                spellCheck={false}
-                className={fieldMono + " h-32 resize-y leading-relaxed"}
-              />
-            </div>
-          ) : (
-            <p className="text-[13px] text-text-faint">Body hanya untuk POST/PUT/PATCH.</p>
+      <div className="flex items-center justify-between border-b border-border px-2 sm:px-3">
+        <div className="flex gap-0.5 overflow-x-auto">
+          {tabs.map((t) => (
+            <button
+              key={t}
+              onClick={() => selectTab(t)}
+              className={`relative flex h-8 items-center gap-1.5 px-2.5 font-mono text-[11px] uppercase tracking-[0.06em] transition ${
+                open && tab === t ? "text-signal" : "text-text-faint hover:text-text-dim"
+              }`}
+            >
+              {TAB_LABEL[t]}
+              {count[t] ? (
+                <span className="tnum rounded-full bg-surface-2 px-1.5 text-[10px] text-text-dim">
+                  {count[t]}
+                </span>
+              ) : null}
+              {open && tab === t && (
+                <span
+                  className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-signal"
+                  style={{ boxShadow: "0 0 6px var(--signal)" }}
+                />
+              )}
+            </button>
           ))}
+        </div>
+        <button
+          onClick={() => setOpen((prev) => !prev)}
+          className="flex h-6 items-center gap-1 rounded px-1.5 font-mono text-[10px] text-text-faint transition hover:bg-surface-2 hover:text-text-dim"
+          title={open ? "Sembunyikan panel parameter" : "Buka panel parameter"}
+          aria-label={open ? "Sembunyikan panel parameter" : "Buka panel parameter"}
+        >
+          <span className="hidden sm:inline">{open ? "Sembunyikan" : "Buka"}</span>
+          <span className="text-[10px]">{open ? "▲" : "▼"}</span>
+        </button>
       </div>
+      {open && (
+        <div className="p-2.5 sm:p-3">
+          {tab === "params" && <PairEditor pairs={params} onChange={onParams} keyPlaceholder="param" />}
+          {tab === "headers" && <PairEditor pairs={headers} onChange={onHeaders} keyPlaceholder="header" />}
+          {tab === "auth" && <AuthEditor auth={auth} onChange={onAuth} />}
+          {tab === "env" && (
+            <EnvEditor
+              vars={env}
+              onChange={onEnv}
+              folders={folders}
+              activeFolderId={activeFolderId}
+              onActiveFolder={onActiveFolder}
+            />
+          )}
+          {tab === "body" &&
+            (hasBody ? (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {body.trim() && (() => {
+                      try {
+                        JSON.parse(body);
+                        return (
+                          <span className="inline-flex items-center gap-1 font-mono text-[10px] text-signal">
+                            <span className="h-1.5 w-1.5 rounded-full bg-signal" />
+                            JSON valid
+                          </span>
+                        );
+                      } catch {
+                        return (
+                          <span className="inline-flex items-center gap-1 font-mono text-[10px] text-warn">
+                            <span className="h-1.5 w-1.5 rounded-full bg-warn" />
+                            Bukan JSON valid
+                          </span>
+                        );
+                      }
+                    })()}
+                  </div>
+                  {body.trim() && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        try {
+                          const parsed = JSON.parse(body);
+                          onBody(JSON.stringify(parsed, null, 2));
+                        } catch {
+                          // Jangan ubah bila tidak valid
+                        }
+                      }}
+                      className="inline-flex items-center gap-1 rounded px-2 py-0.5 font-mono text-[11px] text-text-dim transition hover:bg-surface-2 hover:text-signal"
+                    >
+                      Rapikan JSON
+                    </button>
+                  )}
+                </div>
+                <textarea
+                  value={body}
+                  onChange={(e) => onBody(e.target.value)}
+                  placeholder='{"key":"value"}'
+                  spellCheck={false}
+                  className={fieldMono + " h-24 resize-y leading-relaxed"}
+                />
+              </div>
+            ) : (
+              <p className="text-[12px] text-text-faint">Body hanya untuk POST/PUT/PATCH.</p>
+            ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -25,15 +25,15 @@ export default function RequestBar({
 }) {
   const lamp = methodLamp(method);
   return (
-    <div className="flex flex-wrap items-stretch gap-2 border-b border-border bg-surface px-3 py-2.5 sm:px-4 sm:py-3">
+    <div className="flex flex-wrap items-center gap-1.5 border-b border-border bg-surface px-3 py-1.5 sm:px-4">
       <div
-        className="relative flex items-center rounded-lg border border-border bg-surface-2 pl-3"
-        style={{ boxShadow: `inset 3px 0 0 0 ${lamp}` }}
+        className="relative flex h-8 items-center rounded-md border border-border bg-surface-2 pl-2.5"
+        style={{ boxShadow: `inset 2.5px 0 0 0 ${lamp}` }}
       >
         <select
           value={method}
           onChange={(e) => onMethod(e.target.value as HttpMethod)}
-          className="cursor-pointer appearance-none bg-transparent py-2 pl-1 pr-7 font-mono text-[14px] font-bold tracking-wide focus:outline-none"
+          className="cursor-pointer appearance-none bg-transparent py-1 pl-0.5 pr-6 font-mono text-[12px] font-bold tracking-wide focus:outline-none"
           style={{ color: lamp }}
           aria-label="HTTP method"
         >
@@ -58,14 +58,14 @@ export default function RequestBar({
         placeholder="https://api.example.com/users/1"
         spellCheck={false}
         inputMode="url"
-        className="min-w-0 flex-1 basis-full rounded-lg border border-border bg-surface-2 px-3.5 py-2 font-mono text-[14px] text-text placeholder:text-text-faint transition focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:basis-0"
+        className="h-8 min-w-0 flex-1 basis-full rounded-md border border-border bg-surface-2 px-3 font-mono text-[12px] text-text placeholder:text-text-faint transition focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:basis-0"
         aria-label="Request URL"
       />
 
       <button
         onClick={loading ? onCancel : onSend}
         disabled={!loading && !url.trim()}
-        className={`inline-flex min-w-[104px] flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 font-mono text-[14px] font-semibold uppercase tracking-[0.08em] transition disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none sm:py-0 ${
+        className={`inline-flex h-8 min-w-[88px] flex-1 items-center justify-center gap-1.5 rounded-md px-3.5 font-mono text-[12px] font-semibold uppercase tracking-[0.06em] transition disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none ${
           loading
             ? "bg-err text-on-err hover:brightness-110"
             : "bg-signal text-on-signal shadow-glow hover:brightness-110 disabled:shadow-none"
@@ -73,12 +73,12 @@ export default function RequestBar({
       >
         {loading ? (
           <>
-            <IconStop size={15} />
+            <IconStop size={13} />
             Batal
           </>
         ) : (
           <>
-            <IconSend size={15} />
+            <IconSend size={13} />
             Send
           </>
         )}

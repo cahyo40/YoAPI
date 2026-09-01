@@ -107,19 +107,19 @@ export default function History() {
         onLogout={() => supabase.auth.signOut()}
       />
 
-      <main className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col px-4 py-6 sm:px-5 sm:py-8">
-        <div className="mb-6 flex items-end justify-between gap-4">
+      <main className="mx-auto flex min-h-0 w-full max-w-5xl flex-1 flex-col px-3 py-4 sm:px-6 sm:py-6">
+        <div className="mb-4 flex items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-text">Riwayat</h1>
-            <p className="mt-1 text-[14px] text-text-dim">
+            <h1 className="text-xl font-bold tracking-tight text-text">Riwayat</h1>
+            <p className="mt-0.5 text-[12px] text-text-dim">
               {history.entries.length > 0
                 ? `${history.entries.length} eksekusi tercatat${user ? "" : " di browser ini"}.`
                 : "Setiap request yang kamu kirim tercatat di sini."}
             </p>
           </div>
           {history.entries.length > 0 && (
-            <button onClick={() => setConfirmClear(true)} className={btnDanger + " shrink-0 py-1.5"}>
-              <IconTrash size={15} />
+            <button onClick={() => setConfirmClear(true)} className={btnDanger + " shrink-0"}>
+              <IconTrash size={13} />
               Hapus semua
             </button>
           )}
@@ -130,7 +130,7 @@ export default function History() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Cari URL atau method…"
-            className={field + " mb-5 font-mono"}
+            className={field + " mb-3 font-mono"}
           />
         )}
 

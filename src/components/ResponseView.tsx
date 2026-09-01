@@ -85,14 +85,14 @@ export default function ResponseView({
 
   return (
     <div className="flex h-full flex-col">
-      {/* Title bar — matched h-11 with Model panel */}
-      <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-3 sm:px-4">
-        <div className="flex items-center gap-3 overflow-hidden">
+      {/* Title bar — compact h-9 matched with Model panel */}
+      <div className="flex h-9 shrink-0 items-center justify-between border-b border-border bg-surface px-3 sm:px-4">
+        <div className="flex items-center gap-2.5 overflow-hidden">
           <span className={panelLabel}>Response</span>
           {response ? (
-            <div key={response.status + "-" + response.timeMs} className="ignite flex items-center gap-3 font-mono text-[12px]">
-              <span className="inline-flex items-center gap-1.5 font-semibold" style={{ color: lamp }}>
-                <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: lamp, boxShadow: `0 0 8px ${lamp}` }} />
+            <div key={response.status + "-" + response.timeMs} className="ignite flex items-center gap-2 font-mono text-[11px]">
+              <span className="inline-flex items-center gap-1 font-semibold" style={{ color: lamp }}>
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: lamp, boxShadow: `0 0 6px ${lamp}` }} />
                 {response.status} {response.statusText}
               </span>
               <span className="text-border-strong">•</span>
@@ -101,12 +101,12 @@ export default function ResponseView({
               <span className="text-text-dim">{fmtSize(response.sizeBytes)}</span>
             </div>
           ) : (
-            <span className="font-mono text-[12px] text-text-faint">— — —</span>
+            <span className="font-mono text-[11px] text-text-faint">— — —</span>
           )}
         </div>
 
         {response && (
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5">
             {tab === "body" && (
               <div className="relative flex items-center">
                 <input
@@ -114,12 +114,12 @@ export default function ResponseView({
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Cari…"
                   spellCheck={false}
-                  className="h-7 w-28 rounded-md border border-border bg-surface-2 pl-2 pr-9 font-mono text-[12px] text-text placeholder:text-text-faint focus:border-signal-dim focus:outline-none sm:w-36"
+                  className="h-6.5 w-24 rounded-md border border-border bg-surface-2 pl-2 pr-7 font-mono text-[11px] text-text placeholder:text-text-faint focus:border-signal-dim focus:outline-none sm:w-32"
                   aria-label="Cari di body response"
                 />
                 {search && (
                   <>
-                    <span className="tnum pointer-events-none absolute right-5 font-mono text-[10px] text-text-faint">
+                    <span className="tnum pointer-events-none absolute right-4 font-mono text-[9px] text-text-faint">
                       {matchInfo?.total ?? 0}
                     </span>
                     <button
@@ -127,18 +127,18 @@ export default function ResponseView({
                       className="absolute right-1 rounded p-0.5 text-text-faint transition hover:text-text"
                       aria-label="Hapus pencarian"
                     >
-                      <IconX size={11} />
+                      <IconX size={10} />
                     </button>
                   </>
                 )}
               </div>
             )}
-            <div className="flex h-7 items-center rounded-lg border border-border bg-surface-2 p-0.5">
+            <div className="flex h-6.5 items-center rounded-md border border-border bg-surface-2 p-0.5">
               {(["body", "headers"] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
-                  className={`h-full rounded-md px-2.5 font-mono text-[11px] uppercase tracking-[0.08em] transition ${
+                  className={`h-full rounded px-2 font-mono text-[10px] uppercase tracking-[0.06em] transition ${
                     tab === t ? "bg-elevated text-signal shadow-sm" : "text-text-faint hover:text-text-dim"
                   }`}
                 >
