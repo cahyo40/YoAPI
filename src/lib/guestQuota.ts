@@ -1,6 +1,6 @@
 const KEY = "yoapi_guest_reqs";
 const DAY = 24 * 60 * 60 * 1000; // window reset harian
-export const GUEST_LIMIT = 7; // request sukses per window sebelum login diminta (nudge, bukan pagar keras)
+export const GUEST_LIMIT = 25; // request sukses per window sebelum login diminta (nudge, bukan pagar keras)
 
 type Quota = { count: number; since: number };
 

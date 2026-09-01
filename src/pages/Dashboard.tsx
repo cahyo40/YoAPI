@@ -162,7 +162,7 @@ export default function Dashboard() {
     // Guest: hitung request sukses. Sisa menipis → beri tahu lewat toast.
     if (!user) {
       const left = bumpGuest();
-      if (left > 0 && left <= 3) toast(`Sisa ${left} request sebelum perlu login.`, "info");
+      if (left > 0 && left <= 5) toast(`Sisa ${left} request sebelum perlu login.`, "info");
     }
     if (record) {
       const err = await history.add(m, applied.url, result.response.status, result.response.body);
