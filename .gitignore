@@ -18,6 +18,8 @@ graphify-out/
 .claude/
 .impeccable/
 *.tsbuildinfo
+test-results/
+playwright-report/
 
 # Artefak sampel (bukan bagian aplikasi)
 recommended_model.dart

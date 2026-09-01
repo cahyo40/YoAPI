@@ -1,228 +1,322 @@
-# YoApi
+<div align="center">
 
-**Web-based REST API console + multi-language typed-model generator.**
+# ⚡ YoApi
 
-YoApi menyatukan dua alat yang biasanya terpisah: sebuah HTTP client (seperti Postman) dan sebuah JSON→code generator. Kirim satu request, dan model bertipe ketat untuk bahasa target Anda langsung ter-generate — tanpa langkah copy-paste ke tool lain. Konversi berjalan **100% di browser**; response Anda tidak pernah dikirim ke server YoApi.
+**High-Precision Web-Based REST API Console & Multi-Language Typed Model Generator**
 
-> Dari "punya endpoint" menjadi "model siap tempel" dalam < 30 detik.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-yoapi.vercel.app-34d6c8?style=for-the-badge&logo=vercel&logoColor=black)](https://yoapi.vercel.app)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7_Strict-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.3_SPA-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tests](https://img.shields.io/badge/Tests-58%2F58_Passing-10b981?style=for-the-badge&logo=node.js&logoColor=white)](https://github.com/cahyo40/YoAPI)
+[![License](https://img.shields.io/badge/License-Proprietary-888888?style=for-the-badge)](LICENSE)
 
-🔗 **Live:** https://yoapi.vercel.app
+<p align="center">
+  <em>Eksekusi HTTP request seketika tanpa hambatan CORS dan dapatkan model bertipe ketat siap tempel dalam satu tarikan napas — 100% Client-Side Privacy.</em>
+</p>
 
-![Konsol YoApi — dua panel: request di kiri, response + model di kanan](screenshots/dashboard-desktop.png)
+[🚀 Buka Console](https://yoapi.vercel.app) • [📖 Fitur Utama](#-fitur-utama) • [🏗️ Arsitektur & Alur Kerja](#-arsitektur--alur-kerja) • [🧬 Bahasa Target & Opsi](#-bahasa-target--opsi-generator) • [🛡️ Keamanan & Privasi](#-keamanan--privasi) • [📱 PWA](#-progressive-web-app-pwa)
 
----
+<br/>
 
-## Daftar Isi
+<img src="screenshots/dashboard-desktop.png" alt="YoApi Instrument Panel Console" width="100%" style="border-radius: 12px; box-shadow: 0 20px 40px -15px rgba(0,0,0,0.6);" />
 
-- [Tampilan](#tampilan)
-- [Masalah yang Dipecahkan](#masalah-yang-dipecahkan)
-- [Fitur](#fitur)
-- [Cara Kerja](#cara-kerja)
-- [Arsitektur](#arsitektur)
-- [Bahasa Target & Opsi Generator](#bahasa-target--opsi-generator)
-- [Keamanan & Privasi](#keamanan--privasi)
-- [Progressive Web App](#progressive-web-app)
-- [Desain](#desain)
-- [Batasan](#batasan)
-- [Stack Teknologi](#stack-teknologi)
-- [Lisensi](#lisensi)
+</div>
 
 ---
 
-## Tampilan
+## 📌 Daftar Isi
 
-**Konsol — desktop (dark).** Dua panel berdampingan: konsol request di kiri, readout response + model bertipe di kanan.
+- [💡 Mengapa YoApi?](#-mengapa-yoapi)
+- [✨ Fitur Utama](#-fitur-utama)
+- [🖼️ Antarmuka & Tampilan](#️-antarmuka--tampilan)
+- [🏗️ Arsitektur & Alur Kerja](#-arsitektur--alur-kerja)
+- [🧬 Bahasa Target & Opsi Generator](#-bahasa-target--opsi-generator)
+- [🛡️ Keamanan & Privasi](#-keamanan--privasi)
+- [💻 Panduan Instalasi & Pengembangan Lokal](#-panduan-instalasi--pengembangan-lokal)
+- [📱 Progressive Web App (PWA)](#-progressive-web-app-pwa)
+- [🎨 Filosofi Desain: The Instrument Panel](#-filosofi-desain-the-instrument-panel)
+- [🛠️ Stack Teknologi](#️-stack-teknologi)
+- [📄 Lisensi](#-lisensi)
 
-![Dashboard desktop dark](screenshots/dashboard-desktop.png)
+---
 
-**Konsol — mobile (dark).** Layout menumpuk dengan menu drawer, tetap terbaca di layar sempit.
+## 💡 Mengapa YoApi?
 
-<img src="screenshots/dashboard-mobile.png" alt="Dashboard mobile dark" width="360" />
+Saat mengintegrasikan REST API ke dalam aplikasi mobile (*Flutter, Kotlin, Swift*) maupun backend/frontend (*TypeScript, Go, Python, Java, C#, Rust*), alur kerja developer konvensional seringkali terfragmentasi:
 
-**Riwayat.** Log eksekusi terkelompok per hari, dengan aksi simpan-ke-folder dan diff.
+```
+[Alur Konvensional]
+1. Buka HTTP Client (Postman/Insomnia) ──► Kirim request & dapatkan JSON
+2. Buka tab generator terpisah (misal quicktype.io) ──► Salin & tempel JSON
+3. Konfigurasi ulang tipe & bersihkan nama class secara manual
+4. Salin hasil kode ──► Buka IDE ──► Tempel ke dalam proyek
+```
 
-![Halaman riwayat](screenshots/history.png)
+### ⚡ Solusi YoApi
+YoApi memadatkan seluruh siklus tersebut ke dalam **satu instrumen terintegrasi**:
 
-**Login.** Layar masuk dengan logo instrumen dan opsi Google OAuth.
+```
+[Alur YoApi]
+Kirim Request ──► [Response JSON + Model Bertipe Ter-generate Otomatis di Panel Sebelah]
+```
 
-![Halaman login](screenshots/login.png)
+- **Nol Copy-Paste Antar Tool**: Response JSON langsung diteruskan ke engine generator di browser.
+- **100% Client-Side Privacy**: Data response tidak pernah dikirim ke server YoApi untuk konversi model; seluruh parsing & kompilasi berjalan di dalam sandboxed **Web Worker**.
+- **Bypass CORS Otomatis**: Dilengkapi serverless proxy dengan guard **SSRF** kelas industri.
+
+---
+
+## ✨ Fitur Utama
+
+### 1. 🎛️ Konsol Request Presisi
+- **Semua HTTP Methods**: Mendukung `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, dan `OPTIONS`.
+- **Editor Komprehensif**: Manajemen Query Params, Headers, Auth, dan Body (JSON & Raw) dengan syntax highlighting dan validasi JSON instan.
+- **Collapsible Request Panel**: Panel parameter dapat di-minimize untuk memberikan ruang vertikal maksimal bagi Monaco Editor (mencakup 80%+ tinggi layar).
+- **Auth Injector Otomatis**: Dukungan *Bearer Token*, *Basic Auth* (Base64), dan *Custom API Key*.
+- **cURL Interoperability**:
+  - *Import cURL*: Tempel perintah `curl` apa pun — YoApi otomatis mem-parsing method, URL, headers, dan payload.
+  - *Export cURL*: Salin perintah `curl` siap pakai dengan satu klik.
+- **Import Postman Collection (v2.x)**: Impor file koleksi Postman JSON langsung ke folder workspace dengan pembersihan otomatis dan flattening struktur folder.
+- **Environment Variables**: Substitusi variabel otomatis menggunakan sintaks `{{key}}` yang di-resolve per folder workspace atau session lokal.
+- **Shareable State via URL**: Bagikan konfigurasi request langsung lewat URL query tanpa perlu database (*state-in-URL base64url*).
+
+### 2. 📊 Readout Response & Monaco Editor
+- **Instrument Telemetry**: Readout status code HTTP (dengan color lamp kalibrasi), latensi respons dalam milidetik (`ms`), dan ukuran payload (`KB/MB`).
+- **Monaco Code Editor**: Editor read-only bertenaga VS Code dengan syntax highlighting untuk JSON, XML, HTML, dan Plain Text.
+- **Smart Pretty-Print**: Pemformatan otomatis untuk JSON dan XML/HTML terstruktur.
+- **In-Body Search**: Pencarian teks cepat dengan match counter dan lompat ke baris yang cocok.
+- **Tab Header Response**: Inspeksi seluruh header response yang dikembalikan oleh server target.
+
+### 3. 🧬 Generator Model Bertipe & Symmetrical Options Popover
+- **9 Bahasa Target Utama**: Dart (Flutter), Kotlin (Android), Swift (iOS), TypeScript, Go, Python, Java, C#, dan Rust.
+- **Zero-Scroll Symmetrical Header**: Seluruh konfigurasi switch generator dikemas ke dalam **Floating Options Popover (`[ ⚙️ Opsi ]`)** yang rapi, menjaga simetri visual dengan panel Response tanpa horizontal scrollbar.
+- **Pembersihan Nama Class Otomatis**: Membersihkan prefix ordinal quicktype yang berulang secara cerdas.
+- **Multi-Sample Response Merge**: Menggabungkan beberapa response JSON dari endpoint yang sama untuk menghasilkan schema model yang tangguh (field opsional/nullable dideteksi otomatis).
+- **One-Click Actions**: Salin kode langsung ke clipboard atau download sebagai file source code (`.dart`, `.kt`, `.swift`, `.ts`, `.go`, `.py`, `.java`, `.cs`, `.rs`).
+
+### 4. 📁 Cloud Workspace & Export ZIP
+- **Organisasi Folder**: Kelompokkan request berdasarkan modul atau endpoint, tersinkronisasi lintas perangkat via Supabase Postgres + Row Level Security (RLS).
+- **Sensitive Header Auto-Masking**: Header sensitif seperti `Authorization` atau token otomatis disamarkan saat disimpan ke workspace.
+- **Export 1 Folder ke ZIP**: Unduh seluruh koleksi folder dalam 1 file ZIP yang berisi:
+  - File JSON request & response mentah.
+  - Source code model bertipe untuk setiap endpoint.
+  - Model generator untuk body request.
+  - Endpoint manifest & dokumentasi ringkas.
+
+### 5. 📜 Riwayat Eksekusi & Diff Tracker
+- **Audit Log**: Setiap eksekusi request tercatat lengkap dengan status, URL, durasi, dan waktu.
+- **Response Diff Engine**: Bandingkan response saat ini dengan response eksekusi sebelumnya secara berdampingan untuk melacak perubahan schema API.
+- **Guest vs User**:
+  - *Guest*: Data tersimpan di `localStorage` peramban (kuota 15 req/hari, reset otomatis 24 jam).
+  - *User*: Tersinkronisasi cloud tanpa batas kuota.
+
+---
+
+## 🖼️ Antarmuka & Tampilan
+
+<div align="center">
+
+### 🌙 Dark Mode (Default)
+
+**Desktop Console — Skala Compact Pro Density (80% Equivalent)**
+![Dashboard Desktop Dark](screenshots/dashboard-desktop.png)
+
+<br/>
+
+| Mobile Console | Riwayat Eksekusi & Diff | Layar Masuk / Login |
+|:---:|:---:|:---:|
+| <img src="screenshots/dashboard-mobile.png" alt="Dashboard Mobile Dark" width="260" /> | <img src="screenshots/history.png" alt="History Dark" width="340" /> | <img src="screenshots/login.png" alt="Login Dark" width="300" /> |
+
+<br/>
 
 <details>
-<summary>Light mode</summary>
+<summary><b>☀️ Klik untuk melihat Light Mode Gallery</b></summary>
 
-![Dashboard desktop light](screenshots/dashboard-desktop-light.png)
+<br/>
 
-<img src="screenshots/dashboard-mobile-light.png" alt="Dashboard mobile light" width="360" />
+**Desktop Console — Light Mode**
+![Dashboard Desktop Light](screenshots/dashboard-desktop-light.png)
 
-![Riwayat light](screenshots/history-light.png)
+<br/>
 
-![Login light](screenshots/login-light.png)
+| Mobile Console (Light) | Riwayat (Light) | Login (Light) |
+|:---:|:---:|:---:|
+| <img src="screenshots/dashboard-mobile-light.png" alt="Dashboard Mobile Light" width="260" /> | <img src="screenshots/history-light.png" alt="History Light" width="340" /> | <img src="screenshots/login-light.png" alt="Login Light" width="300" /> |
 
 </details>
 
+</div>
+
 ---
 
-## Masalah yang Dipecahkan
+## 🏗️ Arsitektur & Alur Kerja
 
-Saat mengintegrasikan REST API ke aplikasi (khususnya Flutter/Dart), alur kerja normal itu lambat dan rawan salah ketik:
+YoApi dirancang dengan prinsip **Client-First Privacy** dan **Edge Serverless Proxy**.
 
-1. Buka HTTP client, kirim request, lihat response JSON.
-2. Salin JSON ke tool generator terpisah.
-3. Bersihkan nama class, pilih opsi, generate.
-4. Salin lagi ke editor kode.
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Dev as Developer
+    participant SPA as Browser (React SPA)
+    participant Proxy as Edge Proxy (Vercel Node SSRF Guard)
+    participant Target as Target API Server
+    participant Worker as Sandboxed Web Worker
 
-YoApi memampatkan seluruh siklus itu ke satu layar. Response JSON yang masuk **otomatis** menjadi model bertipe di panel sebelahnya, nama class dibersihkan otomatis, dan opsi generator menyesuaikan gaya proyek Anda.
-
-## Fitur
-
-### Konsol Request
-- **Semua method HTTP** — GET, POST, PUT, PATCH, DELETE, dll.
-- **Header, query params, dan body** editor dengan penyorotan.
-- **Auth helper** — Bearer token, Basic auth, dan API key, di-inject ke header secara otomatis.
-- **Import cURL** — tempel perintah `curl` apa pun, YoApi mengurai method/URL/header/body.
-- **Import Postman** (khusus user login) — impor Postman Collection v2.x (JSON) ke sebuah folder; folder & request bersarang di-flatten. Body mode `raw` diimpor (form-data/file diabaikan); header sensitif otomatis di-mask.
-- **Environment variables** — sintaks `{{key}}` yang di-resolve dari variabel tersimpan (per folder untuk user login, localStorage untuk guest).
-- **Share link** — bagikan konfigurasi request lewat URL (state di-encode di URL, tanpa database).
-- **Starter examples** — endpoint publik nyata (JSONPlaceholder, GitHub API, PokeAPI, dog.ceo) di empty state untuk langsung mencoba.
-
-### Readout Response
-- **Panel instrumen** — status, latensi (ms), dan ukuran payload tampil sebagai readout terkalibrasi.
-- **Monaco editor read-only** dengan syntax highlighting untuk JSON, XML, HTML, dan teks.
-- **Pretty-print** otomatis untuk JSON dan non-JSON (indentasi XML/HTML ringan).
-- **Cari di dalam body** dengan sorot & lompat antar-match.
-- **Tab Headers** menampilkan seluruh header response.
-
-### Generator Model
-- **Konversi otomatis** — response JSON langsung menjadi model bertipe di panel Model.
-- **9 bahasa target** (lihat di bawah).
-- **Nama class dibersihkan** dari prefix ordinal quicktype secara otomatis.
-- **Multi-sample merge** — kumpulkan beberapa response endpoint yang sama; field yang tak selalu ada jadi opsional.
-- **Copy & Download** kode hasil generate.
-
-### Workspace (khusus user login)
-- **Folder** untuk mengelompokkan endpoint tersimpan, tersinkron ke cloud (Supabase).
-- **Simpan request** ke folder; **header sensitif otomatis di-mask** dengan konfirmasi.
-- **Environment per folder** — set variabel yang berbeda untuk tiap workspace.
-- **Import Postman Collection** — impor endpoint dari export Postman (v2.x JSON) langsung ke folder.
-- **Export folder ke ZIP** — berisi JSON mentah (request & response), model per endpoint, model dari body request, daftar endpoint, dan README cara pakai.
-
-### History
-- Setiap eksekusi tercatat: method, URL, status, waktu.
-- **Guest:** localStorage (maks 50 entri).
-- **User login:** tersinkron ke Supabase, lintas perangkat.
-- **Diff** — bandingkan body response satu endpoint dengan eksekusi sebelumnya.
-- **Simpan langsung** dari history ke folder.
-
-### Guest vs User Login
-- **Guest** bisa langsung bekerja tanpa akun — konsol, konversi, history lokal, semua jalan. Dibatasi kuota request harian (reset otomatis tiap 24 jam).
-- **User login** mendapat persistensi: folder & history tersinkron cloud. Login **menambah persistensi, bukan membuka fitur inti**.
-
-## Cara Kerja
-
-```
-  ┌─────────────┐   POST /api/proxy    ┌──────────────────┐   HTTP     ┌─────────────┐
-  │   Browser   │ ───────────────────► │  Vercel Serverless│ ─────────► │  API tujuan │
-  │  (React SPA)│                      │   Proxy (SSRF     │            │  Anda       │
-  │             │ ◄─────────────────── │   guarded)        │ ◄───────── │             │
-  └──────┬──────┘   response JSON      └──────────────────┘            └─────────────┘
-         │
-         │ response tidak pernah meninggalkan browser lagi
-         ▼
-  ┌─────────────────────┐
-  │  Web Worker         │  quicktype-core mengonversi JSON → model bertipe
-  │  (quicktype-core)   │  di thread terpisah, UI tetap responsif
-  └─────────────────────┘
+    Dev->>SPA: Susun Method, URL, Header, Body
+    Dev->>SPA: Klik [Send]
+    SPA->>Proxy: POST /api/proxy (Target URL + Payload)
+    Note over Proxy: 1. DNS Resolution<br/>2. SSRF Check (Tolak IP Private / Loopback / Metadata)<br/>3. Enforce Rate Limit & Timeout
+    Proxy->>Target: Forward HTTP Request
+    Target-->>Proxy: Return HTTP Response
+    Proxy-->>SPA: Return Raw Headers, Status, Body
+    SPA->>Dev: Tampilkan Status, Latensi & Response di Monaco Editor
+    SPA->>Worker: Kirim JSON Body via postMessage() (In-Memory)
+    Note over Worker: Quicktype Core AST Parsing & Name Sanitization
+    Worker-->>SPA: Return Typed Model Code (Dart/Kotlin/Swift/dll)
+    SPA->>Dev: Render Model Code di Monaco Editor
 ```
 
-1. Anda menyusun request di konsol. Browser mengirimnya ke **proxy serverless** (untuk melewati CORS — nol instalasi ekstensi).
-2. Proxy meneruskan ke API tujuan Anda dan mengembalikan response mentah. Proxy dijaga [SSRF guard](#keamanan--privasi).
-3. Response ditampilkan, lalu **dikonversi jadi model di Web Worker** — sepenuhnya di browser Anda. Response tidak pernah dikirim balik ke server YoApi untuk konversi.
+### Komponen Sistem:
+1. **Frontend Client (React 18 + Vite 6 + Tailwind CSS)**:
+   - Single Page Application yang bertindak sebagai orchestrator instrumen.
+2. **Edge Proxy (`api/proxy.ts`)**:
+   - Vercel Serverless Function (Region `sin1` - Singapore) yang menjembatani request untuk melewati batasan CORS tanpa memerlukan ekstensi browser tambahan.
+   - Dilengkapi guard **Server-Side Request Forgery (SSRF)** berbasis DNS lookup yang memblokir alamat IP privat, loopback, link-local, dan AWS/GCP cloud metadata.
+3. **Engine Kompilasi (Web Worker)**:
+   - Menjalankan `quicktype-core` di thread latar belakang (*off-main-thread*), memastikan antarmuka tetap berjalan pada 60 FPS tanpa freeze saat memproses payload JSON besar (hingga 2 MB).
 
-## Arsitektur
+---
 
-Single-Page Application yang di-deploy ke Vercel.
+## 🧬 Bahasa Target & Opsi Generator
 
-| Lapisan | Teknologi | Catatan |
+YoApi mendukung generasi model bertipe untuk 9 bahasa pemrograman dengan opsi lanjutan:
+
+| Bahasa Target | Ekstensi | Fitur & Opsi Generator Khusus |
+|---|:---:|---|
+| **Dart (Flutter)** | `.dart` | • **Null Safety** (`?` dan `required`)<br/>• **Freezed** (`@freezed` immutable class + unions)<br/>• **json_serializable** (`@JsonSerializable()` converter)<br/>• **copyWith** (Method kloning objek dinamis)<br/>• **Equatable** (Value equality tanpa boilerplate `props`) |
+| **Kotlin (Android)** | `.kt` | • Data class dengan anotasi `@JsonProperty` / `@SerialName` |
+| **Swift (iOS)** | `.swift` | • Struct conforming to `Codable` / `Identifiable` |
+| **TypeScript** | `.ts` | • Strict interfaces, type aliases, dan convert helpers |
+| **Go** | `.go` | • Struct bertipe dengan tag `json:"..."` |
+| **Python** | `.py` | • **Pydantic `BaseModel`** (validasi tipe runtime) vs Python Standard `dataclass` |
+| **Java** | `.java` | • **Lombok `@Data`** (menghilangkan boilerplate getter/setter) |
+| **C# (.NET)** | `.cs` | • **`System.Text.Json`** (default modern .NET) vs `Newtonsoft.Json` |
+| **Rust** | `.rs` | • Struct bertipe dengan **`#[derive(Debug, Clone, Serialize, Deserialize)]`** |
+
+---
+
+## 🛡️ Keamanan & Privasi
+
+Keamanan dan integritas data developer adalah fondasi utama YoApi:
+
+- 🔒 **Zero-Server Inspection**: Konten response JSON Anda **tidak pernah disimpan atau dikirim ke server YoApi** untuk keperluan konversi. Pemrosesan model 100% lokal di browser.
+- 🛡️ **SSRF Guard Kelas Industri**:
+  - Proxy melakukan resolving DNS terlebih dahulu sebelum membuka koneksi TCP.
+  - Memblokir `127.0.0.0/8`, `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `169.254.0.0/16` (metadata AWS/GCP), `::1`, `fc00::/7`, dan `fe80::/10`.
+- ⏱️ **Proteksi DoS & Resource Capping**:
+  - Batas ukuran response maksimal 10 MB.
+  - Batas konversi worker maksimal 2 MB.
+  - Rate limiting proxy default 60 req/menit per IP.
+  - Timeout eksekusi 25 detik (mencegah hanging socket).
+- 🔑 **Supabase Row Level Security (RLS)**:
+  - Seluruh tabel Postgres diamankan dengan kebijakan RLS ketat.
+  - Klien frontend hanya memegang `anon key`; kunci administratif (`service_role`) tidak pernah diekspos.
+- 🎭 **Sensitive Header Masking**:
+  - Header seperti `Authorization`, `X-Api-Key`, `Cookie`, dan `Token` secara otomatis disamarkan (`••••••••`) saat disimpan ke cloud folder untuk mencegah kebocoran kredensial tim.
+
+---
+
+## 💻 Panduan Instalasi & Pengembangan Lokal
+
+### Prasyarat
+- **Node.js**: versi 20.x atau 22.x+
+- **npm** atau **pnpm** / **yarn**
+
+### 1. Clone Repositori
+```bash
+git clone https://github.com/cahyo40/YoAPI.git
+cd YoAPI
+```
+
+### 2. Instal Dependensi
+```bash
+npm install
+```
+
+### 3. Konfigurasi Environment Variable
+Salin file template `.env.example` menjadi `.env.local`:
+```bash
+cp .env.example .env.local
+```
+
+Isi variabel Supabase Anda (dapat diperoleh dari dashboard [Supabase](https://supabase.com)):
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+```
+
+### 4. Jalankan Server Pengembangan
+```bash
+npm run dev
+```
+Buka browser di `http://localhost:5173`. Server dev Vite telah dilengkapi dengan *local proxy middleware* terintegrasi sehingga request `/api/proxy` langsung berfungsi secara lokal.
+
+### 5. Menjalankan Pengujian (Unit & Integration Tests)
+YoApi dilengkapi dengan 58 automated tests (Node native test runner):
+```bash
+npm test
+```
+
+### 6. Build untuk Produksi
+```bash
+npx tsc --noEmit && npm run build
+```
+
+---
+
+## 📱 Progressive Web App (PWA)
+
+YoApi dapat diinstal secara native di perangkat Desktop maupun Mobile sebagai Progressive Web App:
+
+- **Instalasi Desktop**: Klik ikon install di bilah alamat browser (Chrome, Edge, Brave).
+- **Instalasi Android**: Buka menu Chrome $\rightarrow$ pilih *"Add to Home Screen"*.
+- **Instalasi iOS**: Buka di Safari $\rightarrow$ tap tombol *Share* $\rightarrow$ pilih *"Add to Home Screen"*.
+- **Offline Shell**: Service worker meng-cache asset aplikasi statis, memungkinkan navigasi instan.
+
+---
+
+## 🎨 Filosofi Desain: The Instrument Panel
+
+YoApi dirancang dengan estetika visual **"Precision Instrument Console"**:
+
+- **Dark-First Mastery**: Skema warna warm near-black (`#0b0f14`), menghindari pure black `#000` yang melelahkan mata.
+- **Luminous Signal Accent**: Warna sinyal cyan instrumen (`#34d6c8`) digunakan secara presisi hanya untuk status aktif dan aksi utama.
+- **Calibrated Pro Density**: Kepadatan visual disesuaikan dengan skala 80% default zoom agar area Monaco Editor memiliki ruang pandang optimal setara IDE profesional.
+- **JetBrains Mono & Inter**: Menggunakan *JetBrains Mono* untuk seluruh angka dan token data tabular, serta *Inter* untuk keterbacaan teks.
+- **WCAG AA Compliance**: Rasio kontras teks di atas tombol dan panel memenuhi standar aksesibilitas internasional.
+
+---
+
+## 🛠️ Stack Teknologi
+
+| Komponen | Teknologi | Deskripsi |
 |---|---|---|
-| UI | React 18 + Vite 6 + TypeScript (strict) | SPA, react-router (`/`, `/login`, `/auth/callback`, `/history`) |
-| Styling | Tailwind CSS | Token warna CSS-variable, dark-first dengan override `.light` |
-| Editor | Monaco (read-only) | JSON, kode hasil generate |
-| Konversi | quicktype-core di Web Worker | Off-main-thread, cap 2 MB |
-| Proxy | Vercel Serverless Function (`api/proxy.ts`) | Bypass CORS, SSRF guard, rate limit, region `sin1` |
-| Auth & Data | Supabase (Postgres + RLS) | Email/password + Google OAuth; anon key saja di frontend |
+| **Frontend Framework** | React 18.3 | Library UI berbasis komponen fungsional & hooks |
+| **Build Tool & Bundler** | Vite 6.0 | Toolchain build super cepat dengan HMR instan |
+| **Bahasa Pemrograman** | TypeScript 5.7 | Static typing ketat (*strict mode*) |
+| **Styling** | Tailwind CSS 3.4 | Utility-first CSS dengan token kustom instrumen |
+| **Code Editor** | Monaco Editor | Engine editor read-only bertenaga VS Code |
+| **Generator Engine** | quicktype-core | Parser schema JSON & compiler model di Web Worker |
+| **Database & Auth** | Supabase | PostgreSQL Database, Auth (OAuth + Email), Row Level Security |
+| **Routing** | React Router v6/v7 | Declarative client-side routing |
+| **Hosting & Edge** | Vercel | Serverless Functions, Edge Network, Global CDN (Region `sin1`) |
 
-**Routing serverless** (`vercel.json`): semua path non-`/api/*` di-rewrite ke `index.html` (SPA fallback); `api/proxy.ts` dibatasi `maxDuration` 30 detik.
+---
 
-## Bahasa Target & Opsi Generator
+## 📄 Lisensi
 
-Model di-generate untuk sembilan bahasa:
+Hak Cipta © 2026 **cahyo40**. Seluruh hak dilindungi undang-undang (*All Rights Reserved*).
 
-**Dart · Kotlin · Swift · TypeScript · Go · Python · Java · C# · Rust**
+Dibuat dengan ❤️ untuk komunitas developer Flutter, Mobile, dan Full-Stack.
 
-Opsi khusus per bahasa:
-
-| Bahasa | Opsi |
-|---|---|
-| **Dart** | Null Safety, Freezed, json_serializable, copyWith, Equatable |
-| **Python** | Pydantic `BaseModel` (validasi runtime) vs dataclass |
-| **Java** | Anotasi Lombok (`@Data`) |
-| **C#** | `System.Text.Json` vs Newtonsoft.Json |
-| **Rust** | `#[derive(Debug, Clone)]` |
-
-Beberapa response endpoint yang sama bisa digabung (multi-sample merge) sehingga field yang tak konsisten otomatis jadi opsional/nullable.
-
-## Keamanan & Privasi
-
-Keamanan bukan fitur tambahan — ini prinsip non-negotiable dari produk.
-
-- **Konversi client-side.** Response JSON Anda dikonversi di Web Worker di browser. Server YoApi tidak pernah melihat isi response untuk keperluan konversi.
-- **SSRF guard pada proxy.** Sebelum meneruskan request, proxy me-resolve DNS lalu **menolak IP privat/internal** (loopback, link-local, RFC 1918, dst). Ini mencegah proxy dipakai menyerang jaringan internal.
-- **Rate limiting** pada proxy (default 60 req/menit per IP).
-- **Batas ukuran** — response di-cap 10 MB; konversi di-cap 2 MB.
-- **Row Level Security (RLS)** aktif di semua tabel Supabase. Frontend hanya memakai **anon key**; `service_role` tidak pernah ada di klien.
-- **Header sensitif di-mask.** Saat menyimpan request ke folder, header seperti `Authorization` otomatis di-mask, dengan konfirmasi eksplisit.
-- **Timeout** request proxy 25 detik (di bawah batas Vercel 30 detik).
-- **Tanpa native `alert`/`confirm`/`prompt`.** Semua interaksi lewat Modal & Toast — tak ada dialog yang bisa membeku atau disalahgunakan.
-
-## Progressive Web App
-
-YoApi bisa dipasang sebagai aplikasi (installable PWA):
-
-- **Web App Manifest** — nama, ikon (192/512 + maskable), tema dark `#0b0f14`, display `standalone`.
-- **Service worker** — app-shell cache untuk instalabilitas + offline dasar. Navigasi memakai strategi network-first dengan fallback shell; **request ke `/api/` selalu network-only** (proxy tidak pernah di-cache); hanya GET yang di-cache.
-- **Apple touch icon** + meta tag untuk iOS.
-
-Pasang lewat ikon install di address bar (Chrome/Edge desktop), "Add to Home screen" (Android), atau Share → "Add to Home Screen" (iOS Safari).
-
-## Desain
-
-Dunia visual **"The Instrument Panel"** — YoApi diperlakukan sebagai instrumen presisi, bukan sekadar form.
-
-- **Dark-first.** Dark adalah pengalaman utama dan paling dipoles; light mode tetap tersedia sebagai override daylight.
-- **Tidak pernah pure black** `#000`. Casing instrumen warm near-black `#0b0f14`.
-- **Satu sinyal ter-iluminasi** — cyan instrumen `#34d6c8`, dipakai hemat hanya untuk state live/selected.
-- **JetBrains Mono** untuk setiap nilai terukur (tabular figures), **Inter** untuk prosa.
-- **Kontras teks WCAG AA.** Warna teks di atas tombol dipilih per-mode untuk kontras yang lolos AA (token `--on-signal` / `--on-err`).
-- **Aksesibilitas** — tombol/toggle keyboard-reachable, icon-only punya `aria-label`, focus ring terlihat, toast `aria-live=polite`.
-
-Seluruh UI dan teks berbahasa Indonesia.
-
-## Batasan
-
-- **Target localhost belum didukung** — proxy tidak bisa menjangkau `localhost` klien (perlu ekstensi browser; direncanakan v1.1).
-- Konversi dibatasi payload 2 MB.
-- OAuth2 flow (dengan `client_secret`) belum tersedia — memerlukan proxy serverless khusus.
-
-## Stack Teknologi
-
-- **React 18.3** · **Vite 6** · **TypeScript 5.7** (strict)
-- **Tailwind CSS 3.4**
-- **@monaco-editor/react** — editor kode read-only
-- **quicktype-core** — engine konversi JSON→model (di Web Worker)
-- **@supabase/supabase-js** — Auth + Postgres + RLS
-- **react-router-dom 6**
-- **Vercel** — hosting SPA + serverless proxy (region `sin1`)
-
-## Lisensi
-
-Hak cipta © 2026 cahyo40. Seluruh hak dilindungi.
