@@ -79,11 +79,23 @@ export async function sendRequest(cfg: {
       }),
       signal: cfg.signal,
     });
-    const data = await res.json();
-    if (!res.ok) return { ok: false, error: data.error || `proxy error ${res.status}` };
+    const text = await res.text();
+    let data: any;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      if (!res.ok) {
+        return {
+          ok: false,
+          error: `Server proxy gagal (${res.status}): ${text.slice(0, 200) || res.statusText}`,
+        };
+      }
+      return { ok: false, error: "Format respons proxy bukan JSON valid." };
+    }
+    if (!res.ok) return { ok: false, error: data?.error || `proxy error ${res.status}` };
     return { ok: true, response: data as ApiResponse };
   } catch (e: any) {
     if (e?.name === "AbortError") return { ok: false, error: "Request dibatalkan.", aborted: true };
-    return { ok: false, error: `Failed to fetch response: ${e?.message ?? "network error"}` };
+    return { ok: false, error: `Gagal mengirim request: ${e?.message ?? "network error"}` };
   }
 }
