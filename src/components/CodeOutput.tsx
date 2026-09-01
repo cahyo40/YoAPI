@@ -106,13 +106,13 @@ export default function CodeOutput({
   return (
     <div className="flex h-full flex-col">
       <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-3 sm:px-4">
-        <div className="flex min-w-0 items-center gap-2 overflow-x-auto">
-          <span className={panelLabel}>Model</span>
+        <div className="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto">
+          <span className={`${panelLabel} shrink-0`}>Model</span>
 
           <select
             value={options.target}
             onChange={(e) => onOptions({ ...options, target: e.target.value as TargetLang })}
-            className="h-7 cursor-pointer rounded-md border border-border bg-surface-2 px-2 font-mono text-[12px] font-semibold text-signal focus:border-signal-dim focus:outline-none"
+            className="h-7 shrink-0 cursor-pointer rounded-md border border-border bg-surface-2 px-2 font-mono text-[12px] font-semibold text-signal focus:border-signal-dim focus:outline-none"
             aria-label="Bahasa target"
           >
             {LANGS.map((l) => (
@@ -125,79 +125,82 @@ export default function CodeOutput({
           <input
             value={className}
             onChange={(e) => onClassName(e.target.value)}
+            placeholder="Nama class"
             spellCheck={false}
             aria-label="Nama class model"
-            className="h-7 w-24 min-w-0 rounded-md border border-border bg-surface-2 px-2 font-mono text-[12px] text-text focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:w-32"
+            className="h-7 w-32 min-w-[120px] shrink-0 rounded-md border border-border bg-surface-2 px-2.5 font-mono text-[12px] text-text placeholder:text-text-faint focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:w-44"
           />
 
-          {isDart && (
-            <div className="flex items-center gap-1">
-              <Toggle
-                label="Null Safety"
-                checked={options.nullSafety}
-                onChange={(v) => onOptions({ ...options, nullSafety: v })}
-              />
-              <Toggle
-                label="Freezed"
-                checked={options.freezed}
-                onChange={(v) => onOptions({ ...options, freezed: v })}
-              />
-              <Toggle
-                label="json_serializable"
-                checked={options.jsonAnnotation}
-                onChange={(v) => onOptions({ ...options, jsonAnnotation: v })}
-              />
-              <Toggle
-                label="copyWith"
-                checked={options.copyWith}
-                onChange={(v) => onOptions({ ...options, copyWith: v })}
-              />
-              <Toggle
-                label="Equatable"
-                checked={options.equatable && !eqDisabled}
-                disabled={eqDisabled}
-                title={
-                  eqDisabled
-                    ? "Equatable hanya untuk output plain (matikan Freezed & json_serializable)"
-                    : undefined
-                }
-                onChange={(v) => onOptions({ ...options, equatable: v })}
-              />
-            </div>
-          )}
+          <div className="flex shrink-0 items-center gap-1">
+            {isDart && (
+              <>
+                <Toggle
+                  label="Null Safety"
+                  checked={options.nullSafety}
+                  onChange={(v) => onOptions({ ...options, nullSafety: v })}
+                />
+                <Toggle
+                  label="Freezed"
+                  checked={options.freezed}
+                  onChange={(v) => onOptions({ ...options, freezed: v })}
+                />
+                <Toggle
+                  label="json_serializable"
+                  checked={options.jsonAnnotation}
+                  onChange={(v) => onOptions({ ...options, jsonAnnotation: v })}
+                />
+                <Toggle
+                  label="copyWith"
+                  checked={options.copyWith}
+                  onChange={(v) => onOptions({ ...options, copyWith: v })}
+                />
+                <Toggle
+                  label="Equatable"
+                  checked={options.equatable && !eqDisabled}
+                  disabled={eqDisabled}
+                  title={
+                    eqDisabled
+                      ? "Equatable hanya untuk output plain (matikan Freezed & json_serializable)"
+                      : undefined
+                  }
+                  onChange={(v) => onOptions({ ...options, equatable: v })}
+                />
+              </>
+            )}
 
-          {options.target === "python" && (
-            <Toggle
-              label="Pydantic"
-              title="Pakai pydantic BaseModel (validasi runtime), bukan dataclass biasa"
-              checked={options.pythonPydantic}
-              onChange={(v) => set({ pythonPydantic: v })}
-            />
-          )}
-          {options.target === "java" && (
-            <Toggle
-              label="Lombok"
-              title="Pakai anotasi Lombok (@Data) — kurangi boilerplate getter/setter"
-              checked={options.javaLombok}
-              onChange={(v) => set({ javaLombok: v })}
-            />
-          )}
-          {options.target === "csharp" && (
-            <Toggle
-              label="System.Text.Json"
-              title="Pakai System.Text.Json (default .NET), bukan Newtonsoft.Json"
-              checked={options.csharpSystemText}
-              onChange={(v) => set({ csharpSystemText: v })}
-            />
-          )}
-          {options.target === "rust" && (
-            <Toggle
-              label="derive Debug/Clone"
-              title="Tambah #[derive(Debug, Clone)] ke tiap struct"
-              checked={options.rustDerive}
-              onChange={(v) => set({ rustDerive: v })}
-            />
-          )}
+            {options.target === "python" && (
+              <Toggle
+                label="Pydantic"
+                title="Pakai pydantic BaseModel (validasi runtime), bukan dataclass biasa"
+                checked={options.pythonPydantic}
+                onChange={(v) => set({ pythonPydantic: v })}
+              />
+            )}
+            {options.target === "java" && (
+              <Toggle
+                label="Lombok"
+                title="Pakai anotasi Lombok (@Data) — kurangi boilerplate getter/setter"
+                checked={options.javaLombok}
+                onChange={(v) => set({ javaLombok: v })}
+              />
+            )}
+            {options.target === "csharp" && (
+              <Toggle
+                label="System.Text.Json"
+                title="Pakai System.Text.Json (default .NET), bukan Newtonsoft.Json"
+                checked={options.csharpSystemText}
+                onChange={(v) => set({ csharpSystemText: v })}
+              />
+            )}
+            {options.target === "rust" && (
+              <Toggle
+                label="derive Debug/Clone"
+                title="Tambah #[derive(Debug, Clone)] ke tiap struct"
+                checked={options.rustDerive}
+                onChange={(v) => set({ rustDerive: v })}
+              />
+            )}
+          </div>
         </div>
 
         <div className="ml-2 flex shrink-0 items-center gap-1">
