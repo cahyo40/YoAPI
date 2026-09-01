@@ -38,11 +38,11 @@ function isJson(text: string): boolean {
 /** One calibrated readout cell: dim label above, mono value below. */
 function Readout({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div className="flex flex-col gap-0.5">
-      <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-faint">
+    <div className="flex flex-col justify-center leading-none">
+      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-faint">
         {label}
       </span>
-      <span className="tnum font-mono text-[14px] font-semibold" style={{ color: color ?? "var(--text)" }}>
+      <span className="tnum mt-0.5 font-mono text-[13px] font-semibold" style={{ color: color ?? "var(--text)" }}>
         {value}
       </span>
     </div>
@@ -96,12 +96,12 @@ export default function ResponseView({
   return (
     <div className="flex h-full flex-col">
       {/* Readout strip — the instrument's primary display. */}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-border bg-surface px-3 py-2.5 sm:px-4">
+      <div className="flex min-h-[52px] flex-wrap items-center gap-x-5 gap-y-2 border-b border-border bg-surface px-3 py-2 sm:px-4">
         <span className={panelLabel}>Response</span>
         {response ? (
           <div key={response.status + "-" + response.timeMs} className="ignite flex items-center gap-5">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full" style={{ background: lamp, boxShadow: `0 0 8px ${lamp}` }} />
+              <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: lamp, boxShadow: `0 0 8px ${lamp}` }} />
               <Readout label="Status" value={`${response.status} ${response.statusText}`.trim()} color={lamp} />
             </div>
             <Readout label="Time" value={`${response.timeMs} ms`} />

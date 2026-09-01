@@ -105,7 +105,7 @@ export default function CodeOutput({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex flex-wrap items-center gap-2.5 border-b border-border bg-surface px-3 py-2.5 sm:px-4">
+      <div className="flex min-h-[52px] flex-wrap items-center gap-2.5 border-b border-border bg-surface px-3 py-2 sm:px-4">
         <span className={panelLabel}>Model</span>
 
         <select
