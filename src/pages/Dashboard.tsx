@@ -32,7 +32,6 @@ import { exportFolder, type ExportItem } from "../lib/exportFolder.ts";
 import { encodeShare, decodeShare } from "../lib/share.ts";
 import type { Folder } from "../hooks/useWorkspace.ts";
 import type { TargetLang } from "../types.ts";
-import { methodLamp } from "../lib/lamp.ts";
 import { splitUrlQuery, mergeParams } from "../lib/urlQuery.ts";
 import { guestRemaining, bumpGuest, GUEST_LIMIT } from "../lib/guestQuota.ts";
 import { generateCurl } from "../lib/curlGenerator.ts";
@@ -472,36 +471,18 @@ export default function Dashboard() {
                   Target localhost belum didukung (perlu browser extension, v1.1).
                 </p>
               )}
-              {!response && !reqError && !loading && (
-                <div className="border-b border-border px-4 py-3">
-                  <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.14em] text-text-faint">
-                    Kalibrasi cepat
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {STARTERS.map((s) => (
-                      <button
-                        key={s.url}
-                        onClick={() => {
-                          setMethod(s.method);
-                          setUrl(s.url);
-                          void send({ method: s.method, url: s.url, record: true });
-                        }}
-                        className="group inline-flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-3 py-1.5 text-[13px] text-text-dim transition hover:border-signal-dim hover:text-text"
-                      >
-                        <span
-                          className="tnum font-mono text-[11px] font-bold"
-                          style={{ color: methodLamp(s.method) }}
-                        >
-                          {s.method}
-                        </span>
-                        {s.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
               <div className="min-h-[40vh] flex-1 md:min-h-0">
-                <ResponseView response={response} error={localBanner ? null : reqError} dark={dark} />
+                <ResponseView
+                  response={response}
+                  error={localBanner ? null : reqError}
+                  dark={dark}
+                  starters={STARTERS}
+                  onSelectStarter={(s) => {
+                    setMethod(s.method);
+                    setUrl(s.url);
+                    void send({ method: s.method, url: s.url, record: true });
+                  }}
+                />
               </div>
             </div>
             <div className="flex min-h-[60vh] min-w-0 flex-col md:min-h-0">

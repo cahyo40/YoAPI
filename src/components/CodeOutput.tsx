@@ -35,7 +35,7 @@ function Toggle({
   return (
     <label
       title={title}
-      className={`flex cursor-pointer select-none items-center gap-1.5 rounded-md border px-2 py-1 font-mono text-[12px] transition ${
+      className={`flex h-7 cursor-pointer select-none items-center gap-1.5 whitespace-nowrap rounded-md border px-2 font-mono text-[11px] transition ${
         disabled
           ? "cursor-not-allowed border-border/60 text-text-faint opacity-50"
           : checked
@@ -52,7 +52,7 @@ function Toggle({
       />
       <span
         aria-hidden
-        className={`h-1.5 w-1.5 rounded-full ${checked && !disabled ? "bg-signal" : "bg-border-strong"}`}
+        className={`h-1.5 w-1.5 shrink-0 rounded-full ${checked && !disabled ? "bg-signal" : "bg-border-strong"}`}
       />
       {label}
     </label>
@@ -105,115 +105,118 @@ export default function CodeOutput({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex min-h-[52px] flex-wrap items-center gap-2.5 border-b border-border bg-surface px-3 py-2 sm:px-4">
-        <span className={panelLabel}>Model</span>
+      <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-3 sm:px-4">
+        <div className="flex min-w-0 items-center gap-2 overflow-x-auto">
+          <span className={panelLabel}>Model</span>
 
-        <select
-          value={options.target}
-          onChange={(e) => onOptions({ ...options, target: e.target.value as TargetLang })}
-          className="cursor-pointer rounded-md border border-border bg-surface-2 px-2 py-1 font-mono text-[13px] font-semibold text-signal focus:border-signal-dim focus:outline-none"
-          aria-label="Bahasa target"
-        >
-          {LANGS.map((l) => (
-            <option key={l.v} value={l.v} className="bg-elevated text-text">
-              {l.label}
-            </option>
-          ))}
-        </select>
+          <select
+            value={options.target}
+            onChange={(e) => onOptions({ ...options, target: e.target.value as TargetLang })}
+            className="h-7 cursor-pointer rounded-md border border-border bg-surface-2 px-2 font-mono text-[12px] font-semibold text-signal focus:border-signal-dim focus:outline-none"
+            aria-label="Bahasa target"
+          >
+            {LANGS.map((l) => (
+              <option key={l.v} value={l.v} className="bg-elevated text-text">
+                {l.label}
+              </option>
+            ))}
+          </select>
 
-        <input
-          value={className}
-          onChange={(e) => onClassName(e.target.value)}
-          spellCheck={false}
-          aria-label="Nama class model"
-          className="w-28 min-w-0 flex-1 rounded-md border border-border bg-surface-2 px-2 py-1 font-mono text-[13px] text-text focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:w-36 sm:flex-none"
-        />
-
-        {isDart && (
-          <div className="flex flex-wrap items-center gap-1.5">
-            <Toggle
-              label="Null Safety"
-              checked={options.nullSafety}
-              onChange={(v) => onOptions({ ...options, nullSafety: v })}
-            />
-            <Toggle
-              label="Freezed"
-              checked={options.freezed}
-              onChange={(v) => onOptions({ ...options, freezed: v })}
-            />
-            <Toggle
-              label="json_serializable"
-              checked={options.jsonAnnotation}
-              onChange={(v) => onOptions({ ...options, jsonAnnotation: v })}
-            />
-            <Toggle
-              label="copyWith"
-              checked={options.copyWith}
-              onChange={(v) => onOptions({ ...options, copyWith: v })}
-            />
-            <Toggle
-              label="Equatable"
-              checked={options.equatable && !eqDisabled}
-              disabled={eqDisabled}
-              title={
-                eqDisabled
-                  ? "Equatable hanya untuk output plain (matikan Freezed & json_serializable)"
-                  : undefined
-              }
-              onChange={(v) => onOptions({ ...options, equatable: v })}
-            />
-          </div>
-        )}
-
-        {options.target === "python" && (
-          <Toggle
-            label="Pydantic"
-            title="Pakai pydantic BaseModel (validasi runtime), bukan dataclass biasa"
-            checked={options.pythonPydantic}
-            onChange={(v) => set({ pythonPydantic: v })}
+          <input
+            value={className}
+            onChange={(e) => onClassName(e.target.value)}
+            spellCheck={false}
+            aria-label="Nama class model"
+            className="h-7 w-24 min-w-0 rounded-md border border-border bg-surface-2 px-2 font-mono text-[12px] text-text focus:border-signal-dim focus:outline-none focus:ring-1 focus:ring-signal-dim sm:w-32"
           />
-        )}
-        {options.target === "java" && (
-          <Toggle
-            label="Lombok"
-            title="Pakai anotasi Lombok (@Data) — kurangi boilerplate getter/setter"
-            checked={options.javaLombok}
-            onChange={(v) => set({ javaLombok: v })}
-          />
-        )}
-        {options.target === "csharp" && (
-          <Toggle
-            label="System.Text.Json"
-            title="Pakai System.Text.Json (default .NET), bukan Newtonsoft.Json"
-            checked={options.csharpSystemText}
-            onChange={(v) => set({ csharpSystemText: v })}
-          />
-        )}
-        {options.target === "rust" && (
-          <Toggle
-            label="derive Debug/Clone"
-            title="Tambah #[derive(Debug, Clone)] ke tiap struct"
-            checked={options.rustDerive}
-            onChange={(v) => set({ rustDerive: v })}
-          />
-        )}
 
-        <div className="ml-auto flex items-center gap-1">
+          {isDart && (
+            <div className="flex items-center gap-1">
+              <Toggle
+                label="Null Safety"
+                checked={options.nullSafety}
+                onChange={(v) => onOptions({ ...options, nullSafety: v })}
+              />
+              <Toggle
+                label="Freezed"
+                checked={options.freezed}
+                onChange={(v) => onOptions({ ...options, freezed: v })}
+              />
+              <Toggle
+                label="json_serializable"
+                checked={options.jsonAnnotation}
+                onChange={(v) => onOptions({ ...options, jsonAnnotation: v })}
+              />
+              <Toggle
+                label="copyWith"
+                checked={options.copyWith}
+                onChange={(v) => onOptions({ ...options, copyWith: v })}
+              />
+              <Toggle
+                label="Equatable"
+                checked={options.equatable && !eqDisabled}
+                disabled={eqDisabled}
+                title={
+                  eqDisabled
+                    ? "Equatable hanya untuk output plain (matikan Freezed & json_serializable)"
+                    : undefined
+                }
+                onChange={(v) => onOptions({ ...options, equatable: v })}
+              />
+            </div>
+          )}
+
+          {options.target === "python" && (
+            <Toggle
+              label="Pydantic"
+              title="Pakai pydantic BaseModel (validasi runtime), bukan dataclass biasa"
+              checked={options.pythonPydantic}
+              onChange={(v) => set({ pythonPydantic: v })}
+            />
+          )}
+          {options.target === "java" && (
+            <Toggle
+              label="Lombok"
+              title="Pakai anotasi Lombok (@Data) — kurangi boilerplate getter/setter"
+              checked={options.javaLombok}
+              onChange={(v) => set({ javaLombok: v })}
+            />
+          )}
+          {options.target === "csharp" && (
+            <Toggle
+              label="System.Text.Json"
+              title="Pakai System.Text.Json (default .NET), bukan Newtonsoft.Json"
+              checked={options.csharpSystemText}
+              onChange={(v) => set({ csharpSystemText: v })}
+            />
+          )}
+          {options.target === "rust" && (
+            <Toggle
+              label="derive Debug/Clone"
+              title="Tambah #[derive(Debug, Clone)] ke tiap struct"
+              checked={options.rustDerive}
+              onChange={(v) => set({ rustDerive: v })}
+            />
+          )}
+        </div>
+
+        <div className="ml-2 flex shrink-0 items-center gap-1">
           <button
             onClick={copy}
             disabled={!code}
-            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[13px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-text-dim"
+            className="inline-flex h-7 items-center gap-1 rounded-md px-2.5 font-mono text-[12px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-text-dim"
           >
-            {copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
+            {copied ? <IconCheck size={13} /> : <IconCopy size={13} />}
             {copied ? "Tersalin" : "Copy"}
           </button>
           <button
             onClick={download}
             disabled={!code}
-            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[13px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-text-dim"
+            className="inline-flex h-7 items-center gap-1 rounded-md px-2.5 font-mono text-[12px] font-medium text-text-dim transition hover:bg-surface-2 hover:text-signal disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-text-dim"
+            title={`Unduh file ${lang.ext}`}
           >
-            <IconDownload size={14} />
-            Download
+            <IconDownload size={13} />
+            <span className="hidden sm:inline">Download</span>
           </button>
         </div>
       </div>

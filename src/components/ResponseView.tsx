@@ -1,7 +1,7 @@
 import Editor from "@monaco-editor/react";
 import { useEffect, useRef, useState } from "react";
-import type { ApiResponse } from "../types.ts";
-import { statusLamp } from "../lib/lamp.ts";
+import type { ApiResponse, HttpMethod } from "../types.ts";
+import { statusLamp, methodLamp } from "../lib/lamp.ts";
 import { defineMonacoThemes } from "../lib/monacoTheme.ts";
 import { panelLabel } from "./ui.ts";
 import { IconX } from "./icons.tsx";
@@ -35,28 +35,18 @@ function isJson(text: string): boolean {
   }
 }
 
-/** One calibrated readout cell: dim label above, mono value below. */
-function Readout({ label, value, color }: { label: string; value: string; color?: string }) {
-  return (
-    <div className="flex flex-col justify-center leading-none">
-      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-faint">
-        {label}
-      </span>
-      <span className="tnum mt-0.5 font-mono text-[13px] font-semibold" style={{ color: color ?? "var(--text)" }}>
-        {value}
-      </span>
-    </div>
-  );
-}
-
 export default function ResponseView({
   response,
   error,
   dark,
+  starters,
+  onSelectStarter,
 }: {
   response: ApiResponse | null;
   error: string | null;
   dark: boolean;
+  starters?: { label: string; method: HttpMethod; url: string }[];
+  onSelectStarter?: (s: { label: string; method: HttpMethod; url: string }) => void;
 }) {
   const [tab, setTab] = useState<"body" | "headers">("body");
   const [search, setSearch] = useState("");
@@ -95,37 +85,41 @@ export default function ResponseView({
 
   return (
     <div className="flex h-full flex-col">
-      {/* Readout strip — the instrument's primary display. */}
-      <div className="flex min-h-[52px] flex-wrap items-center gap-x-5 gap-y-2 border-b border-border bg-surface px-3 py-2 sm:px-4">
-        <span className={panelLabel}>Response</span>
-        {response ? (
-          <div key={response.status + "-" + response.timeMs} className="ignite flex items-center gap-5">
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: lamp, boxShadow: `0 0 8px ${lamp}` }} />
-              <Readout label="Status" value={`${response.status} ${response.statusText}`.trim()} color={lamp} />
+      {/* Title bar — matched h-11 with Model panel */}
+      <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-3 sm:px-4">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <span className={panelLabel}>Response</span>
+          {response ? (
+            <div key={response.status + "-" + response.timeMs} className="ignite flex items-center gap-3 font-mono text-[12px]">
+              <span className="inline-flex items-center gap-1.5 font-semibold" style={{ color: lamp }}>
+                <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: lamp, boxShadow: `0 0 8px ${lamp}` }} />
+                {response.status} {response.statusText}
+              </span>
+              <span className="text-border-strong">•</span>
+              <span className="text-text-dim">{response.timeMs} ms</span>
+              <span className="text-border-strong">•</span>
+              <span className="text-text-dim">{fmtSize(response.sizeBytes)}</span>
             </div>
-            <Readout label="Time" value={`${response.timeMs} ms`} />
-            <Readout label="Size" value={fmtSize(response.sizeBytes)} />
-          </div>
-        ) : (
-          <span className="tnum font-mono text-[13px] text-text-faint">— — —</span>
-        )}
+          ) : (
+            <span className="font-mono text-[12px] text-text-faint">— — —</span>
+          )}
+        </div>
 
         {response && (
-          <div className="ml-auto flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             {tab === "body" && (
               <div className="relative flex items-center">
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Cari di body…"
+                  placeholder="Cari…"
                   spellCheck={false}
-                  className="w-40 rounded-md border border-border bg-surface-2 py-1 pl-2.5 pr-14 font-mono text-[12px] text-text placeholder:text-text-faint focus:border-signal-dim focus:outline-none"
+                  className="h-7 w-28 rounded-md border border-border bg-surface-2 pl-2 pr-9 font-mono text-[12px] text-text placeholder:text-text-faint focus:border-signal-dim focus:outline-none sm:w-36"
                   aria-label="Cari di body response"
                 />
                 {search && (
                   <>
-                    <span className="tnum pointer-events-none absolute right-6 font-mono text-[11px] text-text-faint">
+                    <span className="tnum pointer-events-none absolute right-5 font-mono text-[10px] text-text-faint">
                       {matchInfo?.total ?? 0}
                     </span>
                     <button
@@ -133,19 +127,19 @@ export default function ResponseView({
                       className="absolute right-1 rounded p-0.5 text-text-faint transition hover:text-text"
                       aria-label="Hapus pencarian"
                     >
-                      <IconX size={12} />
+                      <IconX size={11} />
                     </button>
                   </>
                 )}
               </div>
             )}
-            <div className="flex items-center gap-1 rounded-lg border border-border bg-surface-2 p-0.5">
+            <div className="flex h-7 items-center rounded-lg border border-border bg-surface-2 p-0.5">
               {(["body", "headers"] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
-                  className={`rounded-md px-3 py-1 font-mono text-[12px] uppercase tracking-[0.1em] transition ${
-                    tab === t ? "bg-elevated text-signal" : "text-text-faint hover:text-text-dim"
+                  className={`h-full rounded-md px-2.5 font-mono text-[11px] uppercase tracking-[0.08em] transition ${
+                    tab === t ? "bg-elevated text-signal shadow-sm" : "text-text-faint hover:text-text-dim"
                   }`}
                 >
                   {t === "headers" ? `Headers ${headerCount}` : "Body"}
@@ -169,7 +163,7 @@ export default function ResponseView({
             <p className="font-mono text-[14px] text-err">{error}</p>
           </div>
         ) : !response ? (
-          <EmptyReadout />
+          <EmptyReadout starters={starters} onSelectStarter={onSelectStarter} />
         ) : tab === "headers" ? (
           <div className="h-full overflow-auto p-4">
             {headerCount === 0 ? (
@@ -216,16 +210,48 @@ export default function ResponseView({
   );
 }
 
-function EmptyReadout() {
+function EmptyReadout({
+  starters,
+  onSelectStarter,
+}: {
+  starters?: { label: string; method: HttpMethod; url: string }[];
+  onSelectStarter?: (s: { label: string; method: HttpMethod; url: string }) => void;
+}) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
-      {/* ghost readout — unlit cells drawn deliberately (world discipline) */}
-      <div className="tnum font-mono text-3xl font-bold tracking-[0.15em] text-border-strong">
-        — — —
+    <div className="flex h-full flex-col items-center justify-center gap-6 p-6 text-center">
+      <div className="flex flex-col items-center gap-2">
+        <div className="tnum font-mono text-3xl font-bold tracking-[0.15em] text-border-strong">
+          — — —
+        </div>
+        <p className="max-w-[28ch] text-[13px] text-text-faint">
+          Kirim request untuk menyalakan readout & model.
+        </p>
       </div>
-      <p className="max-w-[26ch] text-[14px] text-text-faint">
-        Kirim request untuk menyalakan readout.
-      </p>
+
+      {starters && starters.length > 0 && onSelectStarter && (
+        <div className="flex max-w-sm flex-col items-center gap-2.5 rounded-panel border border-border/80 bg-surface/80 p-3.5 shadow-panel">
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-faint">
+            Kalibrasi Cepat
+          </span>
+          <div className="flex flex-wrap justify-center gap-1.5">
+            {starters.map((s) => (
+              <button
+                key={s.url}
+                onClick={() => onSelectStarter(s)}
+                className="group inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-2.5 py-1 text-[12px] text-text-dim transition hover:border-signal-dim hover:text-text"
+              >
+                <span
+                  className="tnum font-mono text-[10px] font-bold"
+                  style={{ color: methodLamp(s.method) }}
+                >
+                  {s.method}
+                </span>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
