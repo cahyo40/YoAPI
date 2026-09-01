@@ -1,5 +1,5 @@
 import { lookup } from "node:dns/promises";
-import { isBlockedIp } from "./ssrf.js"; // .js: Vercel Node ESM resolve, esbuild map ke ssrf.ts
+import { isBlockedIp } from "./ssrf.ts";
 
 // ponytail: rate-limit in-memory (reset tiap cold start), cukup untuk MVP.
 // upgrade → Upstash Redis saat traffic naik / butuh konsisten antar-instance.
@@ -86,13 +86,7 @@ export default async function handler(req: any, res: any) {
 
   const hostname = target.hostname.replace(/^\[|\]$/g, "");
 
-  // Jika hostname sudah berupa IP langsung (IPv4 / IPv6), cek sebelum DNS lookup
-  if (isBlockedIp(hostname)) {
-    res.status(403).json({ error: "target resolves to a blocked (private) address" });
-    return;
-  }
-
-  // Resolve hostname, tolak jika mengarah ke IP internal (SSRF guard).
+  // Resolve hostname / IP literal, tolak jika mengarah ke IP internal (SSRF guard).
   try {
     const resolved = await lookup(hostname, { all: true });
     if (resolved.some((r) => isBlockedIp(r.address))) {
