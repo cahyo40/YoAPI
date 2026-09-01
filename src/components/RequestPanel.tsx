@@ -182,7 +182,7 @@ function EnvEditor({
       )}
       <p className="text-[13px] text-text-faint">
         Pakai <code className="font-mono text-signal-dim">{"{{key}}"}</code> di URL, header, atau body.{" "}
-        {scoped ? "Tersimpan di folder ini (Supabase)." : "Disimpan di browser ini."}
+        {scoped ? "Tersimpan di cloud folder ini." : "Disimpan di browser ini."}
       </p>
       {vars.map((v, i) => (
         <div key={i} className="flex items-center gap-2">

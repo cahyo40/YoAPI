@@ -96,7 +96,7 @@ Kirim Request ──► [Response JSON + Model Bertipe Ter-generate Otomatis di 
 - **One-Click Actions**: Salin kode langsung ke clipboard atau download sebagai file source code (`.dart`, `.kt`, `.swift`, `.ts`, `.go`, `.py`, `.java`, `.cs`, `.rs`).
 
 ### 4. 📁 Cloud Workspace & Export ZIP
-- **Organisasi Folder**: Kelompokkan request berdasarkan modul atau endpoint, tersinkronisasi lintas perangkat via Supabase Postgres + Row Level Security (RLS).
+- **Organisasi Folder**: Kelompokkan request berdasarkan modul atau endpoint, tersinkronisasi lintas perangkat via Cloud Database + Row Level Security (RLS).
 - **Sensitive Header Auto-Masking**: Header sensitif seperti `Authorization` atau token otomatis disamarkan saat disimpan ke workspace.
 - **Export 1 Folder ke ZIP**: Unduh seluruh koleksi folder dalam 1 file ZIP yang berisi:
   - File JSON request & response mentah.
@@ -219,9 +219,9 @@ Keamanan dan integritas data developer adalah fondasi utama YoApi:
   - Batas konversi worker maksimal 2 MB.
   - Rate limiting proxy default 60 req/menit per IP.
   - Timeout eksekusi 25 detik (mencegah hanging socket).
-- 🔑 **Supabase Row Level Security (RLS)**:
-  - Seluruh tabel Postgres diamankan dengan kebijakan RLS ketat.
-  - Klien frontend hanya memegang `anon key`; kunci administratif (`service_role`) tidak pernah diekspos.
+- 🔑 **Cloud Row Level Security (RLS)**:
+  - Seluruh tabel database diamankan dengan kebijakan RLS ketat.
+  - Klien frontend hanya memegang public client key; kunci administratif tidak pernah diekspos.
 - 🎭 **Sensitive Header Masking**:
   - Header seperti `Authorization`, `X-Api-Key`, `Cookie`, dan `Token` secara otomatis disamarkan (`••••••••`) saat disimpan ke cloud folder untuk mencegah kebocoran kredensial tim.
 
@@ -250,10 +250,10 @@ Salin file template `.env.example` menjadi `.env.local`:
 cp .env.example .env.local
 ```
 
-Isi variabel Supabase Anda (dapat diperoleh dari dashboard [Supabase](https://supabase.com)):
+Isi variabel koneksi cloud backend Anda pada `.env.local`:
 ```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key-here
+VITE_SUPABASE_URL=https://your-cloud-project.domain.co
+VITE_SUPABASE_ANON_KEY=your-client-key-here
 ```
 
 ### 4. Jalankan Server Pengembangan
@@ -308,7 +308,7 @@ YoApi dirancang dengan estetika visual **"Precision Instrument Console"**:
 | **Styling** | Tailwind CSS 3.4 | Utility-first CSS dengan token kustom instrumen |
 | **Code Editor** | Monaco Editor | Engine editor read-only bertenaga VS Code |
 | **Generator Engine** | quicktype-core | Parser schema JSON & compiler model di Web Worker |
-| **Database & Auth** | Supabase | PostgreSQL Database, Auth (OAuth + Email), Row Level Security |
+| **Database & Auth** | Cloud Database & Auth | PostgreSQL, OAuth + Email Auth, Row Level Security |
 | **Routing** | React Router v6/v7 | Declarative client-side routing |
 | **Hosting & Edge** | Vercel | Serverless Functions, Edge Network, Global CDN (Region `sin1`) |
 

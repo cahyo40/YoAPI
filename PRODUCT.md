@@ -22,14 +22,14 @@ Bukan sekadar HTTP client dan bukan sekadar JSON→code generator — YoApi meny
 
 - Alur inti: pilih method → isi URL → Send → response tampil → JSON auto-convert jadi model. Dipakai dalam sesi kerja panjang, banyak endpoint berturut-turut.
 - Authenticated: kumpulkan endpoint ke folder, simpan (header sensitif otomatis di-mask), export folder jadi zip (JSON mentah + model + index endpoint + README, request & response).
-- History menyimpan method/url/status tiap eksekusi (guest: localStorage max 50; authed: Supabase). History akan dipindah ke halaman sendiri (`/history`).
+- History menyimpan method/url/status tiap eksekusi (guest: localStorage max 50; authed: Cloud Database). History akan dipindah ke halaman sendiri (`/history`).
 - Fitur pendukung: env vars `{{key}}` (localStorage), auth helper (bearer/basic/apikey), import cURL, share link (state di URL, tanpa DB), starter examples di empty state.
 - Deploy Vercel (region sin1), proxy serverless dengan SSRF guard.
 
 ## Capabilities and Constraints
 
 - Stack: React 18 + Vite 6 + TypeScript strict SPA; Tailwind (token warna CSS-variable, dark mode via `.dark`); react-router (`/`, `/login`, `/auth/callback`, + `/history` baru). Monaco editor read-only untuk JSON & kode. quicktype-core di Web Worker.
-- Supabase: Auth (email/password + Google OAuth), Postgres + RLS di semua tabel. Anon key saja di frontend; service_role tak pernah.
+- Cloud Database & Auth: Auth (email/password + Google OAuth), Postgres + RLS di semua tabel. Anon key saja di frontend; service_role tak pernah.
 - Batas ukuran konversi 2 MB (cap payload 10 MB). Target localhost belum didukung (perlu ekstensi, v1.1).
 - Non-negotiable (docs/RULES.md): SSRF guard cek private-IP setelah resolusi DNS; RLS aktif; validasi trust boundary; konversi client-side; mask header sensitif + consent; tanpa native alert/confirm/prompt (pakai Modal/Toast).
 

@@ -51,9 +51,11 @@ export default function AppHeader({
           <NavLink to="/history" active={pathname === "/history"} icon={<IconClock size={14} />}>
             History
           </NavLink>
-          <NavLink to="/about" active={pathname === "/about"} icon={<IconInfo size={14} />}>
-            About
-          </NavLink>
+          {!user && (
+            <NavLink to="/about" active={pathname === "/about"} icon={<IconInfo size={14} />}>
+              About
+            </NavLink>
+          )}
         </nav>
       </div>
 

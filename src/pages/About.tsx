@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import AppHeader from "../components/AppHeader.tsx";
 import Footer from "../components/Footer.tsx";
 import { useTheme } from "../hooks/useTheme.ts";
@@ -108,6 +108,11 @@ export default function About() {
   const toast = useToast();
   const [activeLang, setActiveLang] = useState("dart");
   const [copied, setCopied] = useState(false);
+
+  // Jika user sudah login, arahkan ke Console
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
 
   const sampleJson = `{
   "id": 101,
@@ -303,7 +308,7 @@ export default function About() {
               <PillarCard
                 icon={<IconGitCompare size={20} className="text-signal" />}
                 title="History Diff & Env Scoping"
-                description="Bandingkan perbedaan response payload antar eksekusi (LCS Diff) dan atur environment variables {{key}} per folder yang tersinkron via Supabase."
+                description="Bandingkan perbedaan response payload antar eksekusi (LCS Diff) dan atur environment variables {{key}} per folder yang tersinkron secara otomatis ke Cloud Storage."
               />
             </div>
           </div>
